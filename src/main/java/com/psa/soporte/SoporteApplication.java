@@ -20,5 +20,5 @@ public class SoporteApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SoporteApplication.class, args);
 	}
-		//swagger UI: http://localhost:8080/swagger-ui/index.html
+		//swagger UI: http://localhost:8080/soporte/swagger-ui/index.html
 }

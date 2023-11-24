@@ -15,17 +15,6 @@ public class ClienteController {
 
     private final ClienteService clienteService;
 
-    @Autowired
-    public ClienteController(ClienteService clienteService) {
-        this.clienteService = clienteService;
-    }
-
-    @PostMapping
-    public ResponseEntity<Cliente> crearCliente(@RequestBody ClienteRequest cliente) {
-        Cliente createdCliente = clienteService.crearCliente(cliente);
-        return new ResponseEntity<>(createdCliente, HttpStatus.CREATED);
-    }
-
     @GetMapping
     public ResponseEntity<List<Cliente>> getAllClientes() {
         List<Cliente> clientes = clienteService.getAllClientes();
@@ -40,16 +29,27 @@ public class ClienteController {
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @Autowired
+    public ClienteController(ClienteService clienteService) {
+        this.clienteService = clienteService;
+    }
+
+    @PostMapping
+    public ResponseEntity<Cliente> crearCliente(@RequestBody ClienteRequest cliente) {
+        Cliente createdCliente = clienteService.crearCliente(cliente);
+        return new ResponseEntity<>(createdCliente, HttpStatus.CREATED);
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<Cliente> updateCliente(@PathVariable Long id, @RequestBody ClienteRequest clienteRequest) {
-        Cliente updatedCliente = clienteService.actualizarCliente(id, clienteRequest);
-        return updatedCliente != null ?
-                new ResponseEntity<>(updatedCliente, HttpStatus.OK) :
+    public ResponseEntity<Cliente> actualizarCliente(@PathVariable Long id, @RequestBody ClienteRequest clienteRequest) {
+        Cliente clienteActualizada = clienteService.actualizarCliente(id, clienteRequest);
+        return clienteActualizada != null ?
+                new ResponseEntity<>(clienteActualizada, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCliente(@PathVariable Long id) {
+    public ResponseEntity<Void> quitarCliente(@PathVariable Long id) {
         clienteService.quitarCliente(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
