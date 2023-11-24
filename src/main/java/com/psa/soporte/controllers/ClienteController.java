@@ -42,7 +42,7 @@ public class ClienteController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> updateCliente(@PathVariable Long id, @RequestBody ClienteRequest clienteRequest) {
-        Cliente updatedCliente = clienteService.updateCliente(id, clienteRequest);
+        Cliente updatedCliente = clienteService.actualizarCliente(id, clienteRequest);
         return updatedCliente != null ?
                 new ResponseEntity<>(updatedCliente, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -50,7 +50,7 @@ public class ClienteController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCliente(@PathVariable Long id) {
-        clienteService.deleteCliente(id);
+        clienteService.quitarCliente(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

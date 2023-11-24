@@ -32,13 +32,13 @@ public class ClienteService {
         return clienteRepo.save(clienteNuevo);
     }
 
-    public Cliente updateCliente( Long id, ClienteRequest clienteRequest) {
+    public Cliente actualizarCliente(Long id, ClienteRequest clienteRequest) {
         Cliente cliente = getClienteById(id);
         cliente.setNombre(clienteRequest.getNombre());
         return clienteRepo.save(cliente);
     }
 
-    public void deleteCliente(Long id) {
+    public void quitarCliente(Long id) {
         clienteRepo.deleteById(id);
     }
 }
