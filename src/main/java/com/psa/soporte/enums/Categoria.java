@@ -5,7 +5,9 @@ import lombok.Getter;
 @Getter
 public enum Categoria {
     PROYECTO("Proyecto"),
-    SOPORTE("Soporte");
+    SOPORTE("Soporte"),
+    FINANZAS("Finanzas"),
+    IT("IT");
 
     private final String categoria;
 

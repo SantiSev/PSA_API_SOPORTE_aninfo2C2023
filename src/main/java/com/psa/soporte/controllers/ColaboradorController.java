@@ -2,6 +2,7 @@ package com.psa.soporte.controllers;
 
 import com.psa.soporte.DTO.request.ColaboradorRequest;
 import com.psa.soporte.modelos.Colaborador;
+import com.psa.soporte.modelos.Ticket;
 import com.psa.soporte.services.ColaboradorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,14 @@ public class ColaboradorController {
         Colaborador colaborador = colaboradorService.getColaboradorById(id);
         return colaborador != null ?
                 new ResponseEntity<>(colaborador, HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/{id}/tickets")
+    public ResponseEntity<List<Ticket>> getTicketsByColaborador(@PathVariable Long id) {
+        List<Ticket> tickets = colaboradorService.getAllTicketsByColaborador(id);
+        return tickets != null ?
+                new ResponseEntity<>(tickets, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 

@@ -1,15 +1,12 @@
-package com.psa.soporte.DTO.request;
-
+package com.psa.soporte.DTO.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-public class TicketRequest {
-
-    @Schema(example = "Nombre del ticket ejemplo")
+public class TicketResponse {
+    private Long ticket_id;
     private String nombre;
-    @Schema(example = "Descripcion del ticket ejemplo")
     private String descripcion;
     private String prioridad;
     private String severidad;
@@ -17,5 +14,4 @@ public class TicketRequest {
     private String estado;
     private Long tarea_id;
     private Long cliente_id;
-
 }

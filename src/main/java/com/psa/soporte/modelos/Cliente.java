@@ -17,13 +17,13 @@ public class Cliente {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int client_id;
+    private Long client_id;
 
     @Column
     private String nombre;
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.DETACH)
-    private List<Ticket> ticket;
+    private List<Ticket> tickets;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
