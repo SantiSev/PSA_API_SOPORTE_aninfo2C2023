@@ -1,7 +1,7 @@
 package com.psa.soporte.controllers;
 
 import com.psa.soporte.DTO.request.TicketRequest;
-import com.psa.soporte.modelos.Ticket;
+import com.psa.soporte.DTO.response.TicketResponse;
 import com.psa.soporte.services.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,30 +22,34 @@ public class TicketController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Ticket>> getAllTickets() {
-        List<Ticket> ticketes = ticketService.getAllTickets();
-        return new ResponseEntity<>(ticketes, HttpStatus.OK);
+    public ResponseEntity<List<TicketResponse>> getAllTickets() {
+        return new ResponseEntity<>(ticketService.getAllTickets(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Ticket> getTicketById(@PathVariable Long id) {
-        Ticket ticket = ticketService.getTicketById(id);
+    public ResponseEntity<TicketResponse> getTicketById(@PathVariable Long id) {
+        TicketResponse ticket = ticketService.getTicketById(id);
         return ticket != null ?
                 new ResponseEntity<>(ticket, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping
-    public ResponseEntity<Ticket> crearTicket(@RequestBody TicketRequest ticket) {
-        Ticket ticketCreado = ticketService.crearTicket(ticket);
+    @GetMapping("/producto={producto_id}")
+    public ResponseEntity<List<TicketResponse>> getAllTicketsByProducto(@PathVariable Long producto_id) {
+        return new ResponseEntity<>(ticketService.getAllTickets(producto_id), HttpStatus.OK);
+    }
+
+    @PostMapping("/{producto_id}")
+    public ResponseEntity<TicketResponse> crearTicket(@PathVariable String prodcuto_id, @RequestBody TicketRequest ticket) {
+        TicketResponse ticketCreado = ticketService.crearTicket(ticket, Long.valueOf(prodcuto_id));
         return new ResponseEntity<>(ticketCreado, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Ticket> actualizarTicket(@PathVariable Long id, @RequestBody TicketRequest ticketRequest) {
-        Ticket coalboradorActualizada = ticketService.actualizarTicket(id, ticketRequest);
-        return coalboradorActualizada != null ?
-                new ResponseEntity<>(coalboradorActualizada, HttpStatus.OK) :
+    public ResponseEntity<TicketResponse> actualizarTicket(@PathVariable Long id, @RequestBody TicketRequest ticketRequest) {
+        TicketResponse actualizarTicket = ticketService.actualizarTicket(id, ticketRequest);
+        return actualizarTicket != null ?
+                new ResponseEntity<>(actualizarTicket, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 

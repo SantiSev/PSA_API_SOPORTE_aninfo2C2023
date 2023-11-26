@@ -25,6 +25,9 @@ public class Cliente {
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.DETACH)
     private List<Ticket> tickets;
 
+    @ManyToMany(mappedBy = "clientes")
+    private List<Producto> products;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 

@@ -17,5 +17,5 @@ public class TicketRequest {
     private String estado;
     private Long tarea_id;
     private Long cliente_id;
-
+    private Long colaborador_id;
 }

@@ -53,6 +53,7 @@ public class Ticket {
 
         Validacion.validarEnum(ticketRequest.getEstado(), Estado.class);
         this.estado = Estado.valueOf(ticketRequest.getEstado().toUpperCase());
+
     }
 
     @JsonIgnore
@@ -62,6 +63,10 @@ public class Ticket {
     @JsonIgnore
     @ManyToOne
     private Cliente cliente;
+
+    @JsonIgnore
+    @ManyToOne
+    private Producto producto;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
