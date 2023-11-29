@@ -1,5 +1,5 @@
 # Imagen base de Java y Maven
-FROM adoptopenjdk:21-jdk-hotspot
+FROM maven:3.6.3-openjdk-17-slim
 
 # Establecer el directorio de trabajo
 WORKDIR /app
