@@ -5,10 +5,12 @@ import com.psa.soporte.enums.ExceptionMensajes;
 import com.psa.soporte.modelos.Cliente;
 import com.psa.soporte.modelos.Ticket;
 import com.psa.soporte.repo.ClienteRepo;
+import com.psa.soporte.tools.FetchResources;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -46,16 +48,16 @@ public class ClienteService {
 
 
     public Cliente crearCliente(ClienteRequest clienteRequest) {
-        evitarErrorNombre(clienteRequest.getNombre());
-        Cliente clienteNuevo = new Cliente();
-        clienteNuevo.setNombre(clienteRequest.getNombre());
+        evitarErrorNombre(clienteRequest);
+        Cliente clienteNuevo = new Cliente(clienteRequest);
         return clienteRepo.save(clienteNuevo);
     }
 
     public Cliente actualizarCliente(Long id, ClienteRequest clienteRequest) {
         Cliente cliente = getClienteById(id);
-        evitarErrorNombre(clienteRequest.getNombre());
-        cliente.setNombre(clienteRequest.getNombre());
+        evitarErrorNombre(clienteRequest);
+        cliente.setRazonSocial(clienteRequest.getRazonSocial());
+        cliente.setCUIT(clienteRequest.getCUIT());
         return clienteRepo.save(cliente);
     }
 
@@ -63,9 +65,22 @@ public class ClienteService {
         clienteRepo.deleteById(id);
     }
 
-    private void evitarErrorNombre(String nombre){
-        if(clienteRepo.existsByNombre(nombre)){
+    private void evitarErrorNombre(ClienteRequest clienteRequest){
+        if(clienteRepo.existsByRazonSocial(clienteRequest.getRazonSocial()) || clienteRepo.existsByCUIT(clienteRequest.getCUIT())){
             throw new IllegalArgumentException(ExceptionMensajes.CLIENTE_YA_EXISTE.getMessage());
         }
+    }
+
+    public List<Cliente> procesarClientes() {
+        List<ClienteRequest> requests = FetchResources.processClients();
+        List<Cliente> clientes = new ArrayList<>();
+
+        for (ClienteRequest request: requests) {
+
+            if (!clienteRepo.existsByCUIT(request.getCUIT()) || !clienteRepo.existsByRazonSocial(request.getRazonSocial())){
+                clientes.add(crearCliente(request));
+            }
+        }
+        return clientes;
     }
 }

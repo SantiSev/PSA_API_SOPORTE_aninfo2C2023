@@ -65,5 +65,11 @@ public class ColaboradorController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @PostMapping("/procesar_colaboradores")
+    public ResponseEntity<List<Colaborador>> procesarColaboradores() {
+        List<Colaborador> colaboradors = colaboradorService.procesarColaboradores();
+        return new ResponseEntity<>(colaboradors, HttpStatus.CREATED);
+    }
+
 
 }

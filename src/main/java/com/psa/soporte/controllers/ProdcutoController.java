@@ -35,7 +35,6 @@ public class ProdcutoController {
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-
     @PostMapping
     public ResponseEntity<ProductoResponse> crearProducto(@RequestBody ProductoRequest producto) {
         ProductoResponse crearProducto = productoService.crearProducto(producto);
@@ -48,22 +47,6 @@ public class ProdcutoController {
         return actualizarProducto != null ?
                 new ResponseEntity<>(actualizarProducto, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @PutMapping("/{producto_id}/add_cliente={cliente_id}")
-    public ResponseEntity<ProductoResponse> asignarCliente(@PathVariable Long producto_id, @PathVariable Long cliente_id) {
-        ProductoResponse producto = productoService.asignarClienteAProducto(producto_id, cliente_id);
-        return producto != null ?
-                new ResponseEntity<>(producto, HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    @PutMapping("/{producto_id}/remove_cliente={cliente_id}")
-    public ResponseEntity<ProductoResponse> quitarCliente(@PathVariable Long producto_id, @PathVariable Long cliente_id) {
-        ProductoResponse producto = productoService.quitarClienteDeProducto(producto_id, cliente_id);
-        return producto != null ?
-                new ResponseEntity<>(producto, HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping("/{id}")

@@ -5,10 +5,12 @@ import com.psa.soporte.enums.ExceptionMensajes;
 import com.psa.soporte.modelos.Colaborador;
 import com.psa.soporte.modelos.Ticket;
 import com.psa.soporte.repo.ColaboradorRepo;
+import com.psa.soporte.tools.FetchResources;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -50,18 +52,17 @@ public class ColaboradorService {
     }
 
     public Colaborador crearColaborador(ColaboradorRequest colaboradorRequest) {
-        evitarErrorLegajo(colaboradorRequest.getLegajo());
-        Colaborador colaboradorNuevo = new Colaborador();
-        colaboradorNuevo.setNombre(colaboradorRequest.getNombre());
+        evitarErrorLegajo(Long.valueOf(colaboradorRequest.getLegajo()));
+        Colaborador colaboradorNuevo = new Colaborador(colaboradorRequest);
         return colaboradorRepo.save(colaboradorNuevo);
     }
 
     public Colaborador actualizarColaborador(Long id, ColaboradorRequest colaboradorRequest) {
         Colaborador colaborador = getColaboradorById(id);
-        evitarErrorLegajo(colaboradorRequest.getLegajo());
+        evitarErrorLegajo(Long.valueOf(colaboradorRequest.getLegajo()));
         if (colaboradorRequest.getLegajo() != null) {
-            evitarErrorLegajo(colaboradorRequest.getLegajo());
-            colaborador.setLegajo(colaboradorRequest.getLegajo());
+            evitarErrorLegajo(Long.valueOf(colaboradorRequest.getLegajo()));
+            colaborador.setLegajo(Long.valueOf(colaboradorRequest.getLegajo()));
         }
         if (colaboradorRequest.getNombre() != null) {
             colaborador.setNombre(colaboradorRequest.getNombre());
@@ -73,10 +74,27 @@ public class ColaboradorService {
         colaboradorRepo.deleteById(id);
     }
 
+    public List<Colaborador> procesarColaboradores() {
+        List<ColaboradorRequest> requests = FetchResources.processColaboradores();
+        List<Colaborador> colaboradors = new ArrayList<>();
+
+        for (ColaboradorRequest request: requests) {
+
+            if (!colaboradorRepo.existsByLegajo(Long.valueOf(request.getLegajo()))){
+                colaboradors.add(crearColaborador(request));
+            }
+        }
+        return colaboradors;
+    }
+
+
 
     private void evitarErrorLegajo(Long legajo) {
         if (colaboradorRepo.existsByLegajo(legajo)) {
             throw new IllegalArgumentException(ExceptionMensajes.COLABORADOR_YA_EXISTE.getMessage());
         }
     }
+
+
+
 }

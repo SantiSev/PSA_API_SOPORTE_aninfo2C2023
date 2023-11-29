@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum Estado {
 
+    SIN_INICIAR("Sin iniciar"),
     EN_PROGRESO("En Progreso"),
     EN_DESARROLLO("En Desarrollo"),
     EN_IMPLEMENTACION("En Implementación"),

@@ -17,6 +17,11 @@ public class ClienteController {
 
     private final ClienteService clienteService;
 
+    @Autowired
+    public ClienteController(ClienteService clienteService) {
+        this.clienteService = clienteService;
+    }
+
     @GetMapping
     public ResponseEntity<List<Cliente>> getAllClientes() {
         List<Cliente> clientes = clienteService.getAllClientes();
@@ -39,15 +44,16 @@ public class ClienteController {
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @Autowired
-    public ClienteController(ClienteService clienteService) {
-        this.clienteService = clienteService;
-    }
-
     @PostMapping
     public ResponseEntity<Cliente> crearCliente(@RequestBody ClienteRequest cliente) {
         Cliente createdCliente = clienteService.crearCliente(cliente);
         return new ResponseEntity<>(createdCliente, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/procesar_clientes")
+    public ResponseEntity<List<Cliente>> procesarClientes() {
+        List<Cliente> clientes = clienteService.procesarClientes();
+        return new ResponseEntity<>(clientes, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")

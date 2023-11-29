@@ -23,10 +23,17 @@ public class Converter {
         response.setCategoria(ticket.getCategoria().toString());
         response.setEstado(ticket.getEstado().toString());
         response.setTarea_id(ticket.getTarea_id());
-        response.setCliente_id(ticket.getCliente().getClient_id());
-        response.setColaborador_id(response.getColaborador_id());
-        response.setCreatedAt(response.getCreatedAt());
-        response.setUpdatedAt(response.getUpdatedAt());
+
+        if (ticket.getCliente() != null){
+            response.setCliente_id(ticket.getCliente().getClient_id());
+        }
+        if (ticket.getColaborador() != null){
+            response.setColaborador_id(response.getColaborador_id());
+        }
+
+        response.setCreatedAt(ticket.getCreatedAt());
+        response.setUpdatedAt(ticket.getUpdatedAt());
+
         return response;
     }
 
@@ -37,10 +44,6 @@ public class Converter {
         response.setVersion(producto.getVersion());
         response.setProyecto_id(producto.getProyecto_id());
 
-
-        response.setClient_ids(producto.getClientes().stream()
-                .map(Cliente::getClient_id)
-                .collect(Collectors.toList()));
 
         response.setTicket_ids(producto.getTickets().stream()
                 .map(Ticket::getTicket_id)

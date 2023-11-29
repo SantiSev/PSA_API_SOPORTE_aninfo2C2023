@@ -64,13 +64,12 @@ public class TicketService {
 
         Ticket ticketNuevo = new Ticket(ticketRequest);
 
-
-        if (!ticketRequest.getCliente_id().equals(0L)){
-            Cliente cliente = clienteService.getClienteById(ticketRequest.getCliente_id());
+        if (!(ticketRequest.getCliente_id() == 0)){
+            Cliente cliente = clienteService.getClienteById(Long.valueOf(ticketRequest.getCliente_id()));
             ticketNuevo.setCliente(cliente);
         }
-        if (!ticketRequest.getColaborador_id().equals(0L)){
-            Colaborador colaborador = colaboradorService.getColaboradorById(ticketRequest.getColaborador_id());
+        if (!(ticketRequest.getColaborador_id() == 0)){
+            Colaborador colaborador = colaboradorService.getColaboradorById(Long.valueOf(ticketRequest.getColaborador_id()));
             ticketNuevo.setColaborador(colaborador);
         }
 
@@ -108,13 +107,19 @@ public class TicketService {
             ticket.setEstado(Estado.valueOf(ticketRequest.getEstado().toUpperCase()));
         }
 
-        if (!ticketRequest.getCliente_id().equals(0L)){
-            Cliente cliente = clienteService.getClienteById(ticketRequest.getCliente_id());
+        if (!(ticketRequest.getCliente_id() == 0)){
+            Cliente cliente = clienteService.getClienteById(Long.valueOf(ticketRequest.getCliente_id()));
             ticket.setCliente(cliente);
+        }else {
+            ticket.setCliente(null);
         }
-        if (!ticketRequest.getColaborador_id().equals(0L)){
-            Colaborador colaborador = colaboradorService.getColaboradorById(ticketRequest.getColaborador_id());
+
+
+        if (!(ticketRequest.getColaborador_id() == 0)){
+            Colaborador colaborador = colaboradorService.getColaboradorById(Long.valueOf(ticketRequest.getColaborador_id()));
             ticket.setColaborador(colaborador);
+        }else {
+            ticket.setCliente(null);
         }
 
         return Converter.convertToTicketResponse(ticketRepo.save(ticket));

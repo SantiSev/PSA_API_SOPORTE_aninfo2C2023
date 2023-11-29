@@ -12,7 +12,6 @@ public class ProductoResponse {
     private Long proyecto_id;
     private String version;
     private List<Long> ticket_ids;
-    private List<Long> client_ids;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

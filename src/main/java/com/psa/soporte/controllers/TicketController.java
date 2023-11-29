@@ -40,8 +40,8 @@ public class TicketController {
     }
 
     @PostMapping("/{producto_id}")
-    public ResponseEntity<TicketResponse> crearTicket(@PathVariable String prodcuto_id, @RequestBody TicketRequest ticket) {
-        TicketResponse ticketCreado = ticketService.crearTicket(ticket, Long.valueOf(prodcuto_id));
+    public ResponseEntity<TicketResponse> crearTicket(@PathVariable Long producto_id, @RequestBody TicketRequest ticket) {
+        TicketResponse ticketCreado = ticketService.crearTicket(ticket, producto_id);
         return new ResponseEntity<>(ticketCreado, HttpStatus.CREATED);
     }
 

@@ -11,6 +11,6 @@ public class ColaboradorRequest {
     private String nombre;
 
     @Schema(example = "123")
-    private Long legajo;
+    private Integer legajo;
 
 }

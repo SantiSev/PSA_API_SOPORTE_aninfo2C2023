@@ -62,7 +62,7 @@ public class ProductoService {
                 .orElseThrow(() -> new NotFoundException(ExceptionMensajes.PRODUCTO_NOT_FOUND.getMessage()));
 
         if (productoRequestRequest.getProyecto_id() != null) {
-            producto.setProducto_id(productoRequestRequest.getProyecto_id());
+            producto.setProyecto_id(productoRequestRequest.getProyecto_id());
         }
         if (productoRequestRequest.getVersion() != null) {
             producto.setVersion(productoRequestRequest.getVersion());
@@ -71,26 +71,6 @@ public class ProductoService {
         return Converter.convertToProductoResponse(productoRepo.save(producto));
     }
 
-    public ProductoResponse asignarClienteAProducto(Long prodcuto_id, Long cliente_id){
-        Cliente cliente = clienteService.getClienteById(cliente_id);
-        Producto producto = productoRepo.findById(prodcuto_id)
-                .orElseThrow(() -> new NotFoundException(ExceptionMensajes.PRODUCTO_NOT_FOUND.getMessage()));
-
-        producto.getClientes().add(cliente);
-
-        return Converter.convertToProductoResponse(productoRepo.save(producto));
-    }
-
-    public ProductoResponse quitarClienteDeProducto(Long prodcuto_id, Long cliente_id){
-        Cliente cliente = clienteService.getClienteById(cliente_id);
-        Producto producto = productoRepo.findById(prodcuto_id)
-                .orElseThrow(() -> new NotFoundException(ExceptionMensajes.PRODUCTO_NOT_FOUND.getMessage()));
-
-        producto.getClientes().remove(cliente);
-
-        return Converter.convertToProductoResponse(productoRepo.save(producto));
-
-    }
 
     public void quitarProducto(Long id) {
         productoRepo.deleteById(id);

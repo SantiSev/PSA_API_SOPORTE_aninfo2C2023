@@ -11,11 +11,18 @@ public class TicketRequest {
     private String nombre;
     @Schema(example = "Descripcion del ticket ejemplo")
     private String descripcion;
+    @Schema(example = "Media")
     private String prioridad;
+    @Schema(example = "S1")
     private String severidad;
+    @Schema(example = "Proyecto")
     private String categoria;
+    @Schema(example = "SIN_INICIAR")
     private String estado;
+    @Schema(example = "0")
     private Long tarea_id;
-    private Long cliente_id;
-    private Long colaborador_id;
+    @Schema(example = "0")
+    private Integer cliente_id;
+    @Schema(example = "0")
+    private Integer colaborador_id;
 }

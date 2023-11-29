@@ -8,7 +8,8 @@ public enum ExceptionMensajes {
     PRODUCTO_NOT_FOUND("Producto con este id no existe"),
     CLIENTE_NOT_FOUND("Cliente con este id no existe"),
     COLABORADOR_YA_EXISTE("Ya existe un colaborador con ese legajo ingresado"),
-    CLIENTE_YA_EXISTE("Ya existe un cliente con ese nombre ingresado");
+    CLIENTE_YA_EXISTE("Ya existe un cliente con ese nombre ingresado"),
+    ERROR_PROCESAR_CLIENTES("Hubo un error con el URL que has ingresado, por favor reviselo e intentalo denuevo");
 
     private final String message;
 
