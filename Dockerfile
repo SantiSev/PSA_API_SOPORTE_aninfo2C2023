@@ -1,29 +1,23 @@
-# Etapa de construcción
-FROM adoptopenjdk:21-jdk-hotspot as build
+# Imagen base de Java y Maven
+FROM maven:3.8.4-openjdk-21-slim
 
-# Establece el directorio de trabajo en /app
+# Establecer el directorio de trabajo
 WORKDIR /app
 
-# Copia solo el archivo POM para descargar dependencias
+# Copiar el archivo pom.xml para descargar las dependencias
 COPY pom.xml .
 
-# Descarga dependencias usando Maven
-RUN ./mvnw dependency:go-offline
+# Descargar las dependencias del proyecto
+RUN mvn dependency:go-offline -B
 
-# Copia el código fuente
+# Copiar el resto de los archivos del proyecto
 COPY src ./src
 
-# Compila la aplicación
-RUN ./mvnw package
+# Empaquetar la aplicación en un archivo JAR
+RUN mvn package -DskipTests
 
-# Etapa de ejecución
-FROM adoptopenjdk:21-jre-hotspot
+# Exponer el puerto 8080
+EXPOSE 8080
 
-# Establece el directorio de trabajo en /app
-WORKDIR /app
-
-# Copia solo los archivos necesarios desde la etapa de construcción
-COPY --from=build /app/target/soporte-0.0.1-SNAPSHOT.jar .
-
-# Comando para ejecutar la aplicación al iniciar el contenedor
-CMD ["java", "-jar", "target/soporte-0.0.1-SNAPSHOT.jar"]
+# Comando para ejecutar la aplicación Java
+CMD ["java", "-jar", "target/Proyectos-0.0.1-SNAPSHOT.jar"]
