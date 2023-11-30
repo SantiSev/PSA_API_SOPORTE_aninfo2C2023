@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "colaboradores")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ColaboradorController {
 
     private final ColaboradorService colaboradorService;
