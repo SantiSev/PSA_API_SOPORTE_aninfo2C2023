@@ -135,7 +135,7 @@ public class TicketService {
         return Converter.convertToTicketResponse(ticketRepo.save(ticket));
     }
 
-    
+
     public TicketResponse agregarTarea(Long ticketId, Long tareaId){
         Ticket ticket = ticketRepo.findById(ticketId)
                 .orElseThrow(() -> new NotFoundException(ExceptionMensajes.TICKET_NOT_FOUND.getMessage()));

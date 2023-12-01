@@ -1,4 +1,4 @@
-package com.psa.soporte;
+package com.psa.soporte.cucumber;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
