@@ -1,7 +1,9 @@
 package com.psa.soporte.modelos;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.psa.soporte.DTO.request.ProductoRequest;
+import com.psa.soporte.DTO.request.ProductoVersionRequest;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,19 +17,24 @@ import java.util.List;
 @Data
 @Entity
 @NoArgsConstructor
-@Table(name = "productos")
-public class Producto {
+@Table(name = "productoVersiones")
+public class ProductoVersion {
 
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long productoId;
+    private Long productoVersionId;
 
     @Column
-    private String nombre;
+    private String version;
 
-    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL)
-    private List<ProductoVersion> versiones;
+    @JsonIgnore
+    @ManyToOne
+    private Producto producto;
+
+    @OneToMany(mappedBy = "productoVersion", cascade = CascadeType.ALL)
+    private List<Ticket> tickets;
+
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -35,8 +42,8 @@ public class Producto {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public Producto(ProductoRequest productoRequest) {
-        this.nombre = productoRequest.getNombre();
-        this.versiones = new ArrayList<>();
+    public ProductoVersion(ProductoVersionRequest productoVersionRequest) {
+        this.version = productoVersionRequest.getVersion();
+        this.tickets = new ArrayList<Ticket>();
     }
 }

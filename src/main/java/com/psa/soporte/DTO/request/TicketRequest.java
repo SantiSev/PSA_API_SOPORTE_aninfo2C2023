@@ -20,9 +20,8 @@ public class TicketRequest {
     @Schema(example = "SIN_INICIAR")
     private String estado;
     @Schema(example = "0")
-    private Long tarea_id;
+    private Integer clienteId;
     @Schema(example = "0")
-    private Integer cliente_id;
-    @Schema(example = "0")
-    private Integer colaborador_id;
+    private Integer colaboradorId;
+    private TareaRequest tareaRequest;
 }

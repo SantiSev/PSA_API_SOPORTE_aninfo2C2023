@@ -8,34 +8,20 @@ import com.psa.soporte.enums.Prioridad;
 import com.psa.soporte.enums.Severidad;
 import com.psa.soporte.tools.Validacion;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
 @NoArgsConstructor
 @Table(name = "tickets")
 public class Ticket {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ticket_id;
-    private Long tarea_id;
-    private String nombre;
-    private String descripcion;
-
-    private Prioridad prioridad;
-
-    private Severidad severidad;
-
-    private Categoria categoria;
-
-    private Estado estado;
 
     public Ticket(TicketRequest ticketRequest) {
         this.nombre = ticketRequest.getNombre();
@@ -53,7 +39,26 @@ public class Ticket {
         Validacion.validarEnum(ticketRequest.getEstado(), Estado.class);
         this.estado = Estado.valueOf(ticketRequest.getEstado().toUpperCase());
 
+        this.tareas = new ArrayList<>();
+
     }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long ticketId;
+
+    @Column
+    private String nombre;
+    @Column
+    private String descripcion;
+    @Column
+    private Prioridad prioridad;
+    @Column
+    private Severidad severidad;
+    @Column
+    private Categoria categoria;
+    @Column
+    private Estado estado;
 
     @JsonIgnore
     @ManyToOne
@@ -65,7 +70,15 @@ public class Ticket {
 
     @JsonIgnore
     @ManyToOne
-    private Producto producto;
+    private ProductoVersion productoVersion;
+
+    @ManyToMany
+    @JoinTable(
+            name = "ticket_tarea",
+            joinColumns = @JoinColumn(name = "ticket_id"),
+            inverseJoinColumns = @JoinColumn(name = "tarea_id")
+    )
+    private List<Tarea> tareas;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

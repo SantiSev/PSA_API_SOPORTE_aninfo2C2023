@@ -1,9 +1,12 @@
 package com.psa.soporte.tools;
 
 import com.psa.soporte.DTO.response.ProductoResponse;
+import com.psa.soporte.DTO.response.ProductoVersionResponse;
+import com.psa.soporte.DTO.response.TareaResponse;
 import com.psa.soporte.DTO.response.TicketResponse;
-import com.psa.soporte.modelos.Cliente;
 import com.psa.soporte.modelos.Producto;
+import com.psa.soporte.modelos.ProductoVersion;
+import com.psa.soporte.modelos.Tarea;
 import com.psa.soporte.modelos.Ticket;
 
 import java.util.ArrayList;
@@ -14,21 +17,24 @@ public class Converter {
 
     public static TicketResponse convertToTicketResponse(Ticket ticket) {
         TicketResponse response = new TicketResponse();
-        response.setTicket_id(ticket.getTicket_id());
-        response.setProducto_id(ticket.getProducto().getProducto_id());
+        response.setTicketId(ticket.getTicketId());
+        response.setProductoVersionId(ticket.getProductoVersion().getProductoVersionId());
         response.setNombre(ticket.getNombre());
         response.setDescripcion(ticket.getDescripcion());
         response.setPrioridad(ticket.getPrioridad().toString());
         response.setSeveridad(ticket.getSeveridad().toString());
         response.setCategoria(ticket.getCategoria().toString());
         response.setEstado(ticket.getEstado().toString());
-        response.setTarea_id(ticket.getTarea_id());
+
+        response.setTareaIds(ticket.getTareas().stream()
+                .map(Tarea::getTareaIdRemoto)
+                .collect(Collectors.toList()));
 
         if (ticket.getCliente() != null){
-            response.setCliente_id(ticket.getCliente().getClient_id());
+            response.setClienteId(ticket.getCliente().getClientId());
         }
         if (ticket.getColaborador() != null){
-            response.setColaborador_id(response.getColaborador_id());
+            response.setColaboradorId(response.getColaboradorId());
         }
 
         response.setCreatedAt(ticket.getCreatedAt());
@@ -40,18 +46,35 @@ public class Converter {
     public static ProductoResponse convertToProductoResponse(Producto producto) {
 
         ProductoResponse response = new ProductoResponse();
-        response.setProducto_id(producto.getProducto_id());
-        response.setVersion(producto.getVersion());
-        response.setProyecto_id(producto.getProyecto_id());
-
-
-        response.setTicket_ids(producto.getTickets().stream()
-                .map(Ticket::getTicket_id)
-                .collect(Collectors.toList()));
-
+        response.setProductoId(producto.getProductoId());
+        response.setNombre(producto.getNombre());
+        response.setVersiones(convertToProductoVersionResponseList(producto.getVersiones()));
         response.setCreatedAt(producto.getCreatedAt());
         response.setUpdatedAt(producto.getUpdatedAt());
 
+        return response;
+    }
+
+    public static ProductoVersionResponse convertToProductoVersionResponse(ProductoVersion productoVersion) {
+
+        ProductoVersionResponse response = new ProductoVersionResponse();
+        response.setProductoVersionId(productoVersion.getProductoVersionId());
+        response.setVersion(productoVersion.getVersion());
+        response.setTickets(convertToTicketResponseList(productoVersion.getTickets()));
+        response.setCreatedAt(productoVersion.getCreatedAt());
+        response.setUpdatedAt(productoVersion.getUpdatedAt());
+
+        return response;
+    }
+
+    public static TareaResponse convertToTareaResponse(Tarea tarea){
+
+        TareaResponse response = new TareaResponse();
+        response.setTareaId(tarea.getTareaId());
+        response.setTareaIdRemoto(tarea.getTareaIdRemoto());
+        response.setTicketIds(tarea.getTickets().stream()
+                .map(Ticket::getTicketId)
+                .collect(Collectors.toList()));
         return response;
     }
 
@@ -71,6 +94,15 @@ public class Converter {
             productoResponses.add(response);
         }
         return productoResponses;
+    }
+
+    public static List<ProductoVersionResponse> convertToProductoVersionResponseList(List<ProductoVersion> versiones) {
+        List<ProductoVersionResponse> responses = new ArrayList<>();
+        for (ProductoVersion version : versiones) {
+            ProductoVersionResponse response = convertToProductoVersionResponse(version);
+            responses.add(response);
+        }
+        return responses;
     }
 
 }

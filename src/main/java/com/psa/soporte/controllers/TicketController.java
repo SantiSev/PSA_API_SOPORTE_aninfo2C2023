@@ -1,5 +1,6 @@
 package com.psa.soporte.controllers;
 
+import com.psa.soporte.DTO.request.TareaRequest;
 import com.psa.soporte.DTO.request.TicketRequest;
 import com.psa.soporte.DTO.response.TicketResponse;
 import com.psa.soporte.services.TicketService;
@@ -40,9 +41,9 @@ public class TicketController {
         return new ResponseEntity<>(ticketService.getAllTickets(producto_id), HttpStatus.OK);
     }
 
-    @PostMapping("/{producto_id}")
-    public ResponseEntity<TicketResponse> crearTicket(@PathVariable Long producto_id, @RequestBody TicketRequest ticket) {
-        TicketResponse ticketCreado = ticketService.crearTicket(ticket, producto_id);
+    @PostMapping("/{productoVersionId}")
+    public ResponseEntity<TicketResponse> crearTicket(@PathVariable Long productoVersionId, @RequestBody TicketRequest ticket) {
+        TicketResponse ticketCreado = ticketService.crearTicket(ticket, productoVersionId);
         return new ResponseEntity<>(ticketCreado, HttpStatus.CREATED);
     }
 
@@ -54,9 +55,33 @@ public class TicketController {
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @PutMapping("/{ticketId}/agregarTarea={tareaId}")
+    public ResponseEntity<TicketResponse> agregarTarea(@PathVariable Long ticketId, @PathVariable Long tareaId ) {
+        TicketResponse actualizarTicket = ticketService.agregarTarea(ticketId, tareaId);
+        return actualizarTicket != null ?
+                new ResponseEntity<>(actualizarTicket, HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+
+    @PutMapping("/{ticketId}/quitarTarea={tareaId}")
+    public ResponseEntity<TicketResponse> quitarTarea(@PathVariable Long ticketId, @PathVariable Long tareaId ) {
+        TicketResponse actualizarTicket = ticketService.quitarTarea(ticketId, tareaId);
+        return actualizarTicket != null ?
+                new ResponseEntity<>(actualizarTicket, HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> quitarTicket(@PathVariable Long id) {
         ticketService.quitarTicket(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/tarea/{id}")
+    public ResponseEntity<Void> quitarTarea(@PathVariable Long id) {
+        ticketService.quitarTarea(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

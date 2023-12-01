@@ -21,7 +21,7 @@ public class Cliente {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long client_id;
+    private Long clientId;
 
     @Column
     private String razonSocial;

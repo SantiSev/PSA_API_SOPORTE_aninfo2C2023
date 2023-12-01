@@ -3,11 +3,9 @@ package com.psa.soporte.services;
 import com.psa.soporte.DTO.request.TicketRequest;
 import com.psa.soporte.DTO.response.TicketResponse;
 import com.psa.soporte.enums.*;
-import com.psa.soporte.modelos.Cliente;
-import com.psa.soporte.modelos.Colaborador;
-import com.psa.soporte.modelos.Producto;
-import com.psa.soporte.modelos.Ticket;
-import com.psa.soporte.repo.ProductoRepo;
+import com.psa.soporte.modelos.*;
+import com.psa.soporte.repo.ProductoVersionRepo;
+import com.psa.soporte.repo.TareaRepo;
 import com.psa.soporte.repo.TicketRepo;
 import com.psa.soporte.tools.Converter;
 import com.psa.soporte.tools.Validacion;
@@ -22,16 +20,18 @@ import java.util.Optional;
 public class TicketService {
 
     private final TicketRepo ticketRepo;
-    private final ProductoRepo productoRepo;
+    private final TareaRepo tareaTicketRepo;
+    private final ProductoVersionRepo productoVersionRepo;
     private final ClienteService clienteService;
     private final ColaboradorService colaboradorService;
 
     @Autowired
-    public TicketService(TicketRepo ticketRepo, ClienteService clienteService, ColaboradorService colaboradorService, ProductoRepo productoRepo) {
+    public TicketService(TicketRepo ticketRepo, TareaRepo tareaTicketRepo, ClienteService clienteService, ColaboradorService colaboradorService, ProductoVersionRepo productoVersionRepo) {
         this.ticketRepo = ticketRepo;
+        this.tareaTicketRepo = tareaTicketRepo;
         this.clienteService = clienteService;
         this.colaboradorService = colaboradorService;
-        this.productoRepo = productoRepo;
+        this.productoVersionRepo = productoVersionRepo;
     }
 
 
@@ -43,8 +43,9 @@ public class TicketService {
         return Converter.convertToTicketResponseList(tickets);
     }
 
-    public List<TicketResponse> getAllTickets(Long producto_id) {
-        List<Ticket> tickets = productoRepo.findById(producto_id)
+    public List<TicketResponse> getAllTickets(Long ProductoVersionId) {
+        
+        List<Ticket> tickets = productoVersionRepo.findById(ProductoVersionId)
                 .orElseThrow(() -> new NotFoundException(ExceptionMensajes.PRODUCTO_NOT_FOUND.getMessage())).getTickets();
         if (tickets.isEmpty()) {
             throw new NotFoundException(ExceptionMensajes.EMPTY_LIST.getMessage());
@@ -57,24 +58,33 @@ public class TicketService {
                 .orElseThrow(() -> new NotFoundException(ExceptionMensajes.TICKET_NOT_FOUND.getMessage())));
     }
 
-    public TicketResponse crearTicket(TicketRequest ticketRequest, Long producto_id) {
+    public TicketResponse crearTicket(TicketRequest ticketRequest, Long ProductoVersionId) {
 
-        Producto producto = productoRepo.findById(producto_id)
+        ProductoVersion version = productoVersionRepo.findById(ProductoVersionId)
                 .orElseThrow(() -> new NotFoundException(ExceptionMensajes.PRODUCTO_NOT_FOUND.getMessage()));
 
         Ticket ticketNuevo = new Ticket(ticketRequest);
 
-        if (!(ticketRequest.getCliente_id() == 0)){
-            Cliente cliente = clienteService.getClienteById(Long.valueOf(ticketRequest.getCliente_id()));
+        if (!(ticketRequest.getClienteId() == 0)){
+            Cliente cliente = clienteService.getClienteById(Long.valueOf(ticketRequest.getClienteId()));
             ticketNuevo.setCliente(cliente);
         }
-        if (!(ticketRequest.getColaborador_id() == 0)){
-            Colaborador colaborador = colaboradorService.getColaboradorById(Long.valueOf(ticketRequest.getColaborador_id()));
+        if (!(ticketRequest.getColaboradorId() == 0)){
+            Colaborador colaborador = colaboradorService.getColaboradorById(Long.valueOf(ticketRequest.getColaboradorId()));
             ticketNuevo.setColaborador(colaborador);
         }
 
-        producto.getTickets().add(ticketNuevo);
-        ticketNuevo.setProducto(producto);
+        version.getTickets().add(ticketNuevo);
+        ticketNuevo.setProductoVersion(version);
+
+        for (Long tareaId: ticketRequest.getTareaRequest().getTareaId()) {
+            Tarea tarea = tareaTicketRepo.findById(tareaId).orElseGet(() -> new Tarea(tareaId));
+
+            tarea.getTickets().add(ticketNuevo);
+            ticketNuevo.getTareas().add(tarea);
+
+            tareaTicketRepo.save(tarea);
+        }
 
         return Converter.convertToTicketResponse(ticketRepo.save(ticketNuevo));
     }
@@ -107,16 +117,16 @@ public class TicketService {
             ticket.setEstado(Estado.valueOf(ticketRequest.getEstado().toUpperCase()));
         }
 
-        if (!(ticketRequest.getCliente_id() == 0)){
-            Cliente cliente = clienteService.getClienteById(Long.valueOf(ticketRequest.getCliente_id()));
+        if (!(ticketRequest.getClienteId() == 0)){
+            Cliente cliente = clienteService.getClienteById(Long.valueOf(ticketRequest.getClienteId()));
             ticket.setCliente(cliente);
         }else {
             ticket.setCliente(null);
         }
 
 
-        if (!(ticketRequest.getColaborador_id() == 0)){
-            Colaborador colaborador = colaboradorService.getColaboradorById(Long.valueOf(ticketRequest.getColaborador_id()));
+        if (!(ticketRequest.getColaboradorId() == 0)){
+            Colaborador colaborador = colaboradorService.getColaboradorById(Long.valueOf(ticketRequest.getColaboradorId()));
             ticket.setColaborador(colaborador);
         }else {
             ticket.setCliente(null);
@@ -125,10 +135,50 @@ public class TicketService {
         return Converter.convertToTicketResponse(ticketRepo.save(ticket));
     }
 
+    
+    public TicketResponse agregarTarea(Long ticketId, Long tareaId){
+        Ticket ticket = ticketRepo.findById(ticketId)
+                .orElseThrow(() -> new NotFoundException(ExceptionMensajes.TICKET_NOT_FOUND.getMessage()));
+
+        Tarea tarea = tareaTicketRepo.findById(tareaId).orElseGet(() -> new Tarea(tareaId));
+
+        boolean tareaYaAsociada = ticket.getTareas().stream()
+                .anyMatch(t -> t.getTareaIdRemoto().equals(tareaId));
+
+        if (!tareaYaAsociada) {
+            ticket.getTareas().add(tarea);
+            tarea.getTickets().add(ticket);
+
+            tareaTicketRepo.save(tarea);
+        }
+
+        tareaTicketRepo.save(tarea);
+
+        return Converter.convertToTicketResponse(ticketRepo.save(ticket));
+    }
+
+    public TicketResponse quitarTarea(Long ticketId, Long tareaId){
+
+        Ticket ticket = ticketRepo.findById(ticketId)
+                .orElseThrow(() -> new NotFoundException(ExceptionMensajes.TICKET_NOT_FOUND.getMessage()));
+
+        for (Tarea tarea: ticket.getTareas()) {
+            if (tarea.getTareaId().equals(tareaId)){
+                ticket.getTareas().remove(tarea);
+                tarea.getTickets().remove(ticket);
+                tareaTicketRepo.save(tarea);
+                break;
+            }
+        }
+        return Converter.convertToTicketResponse(ticketRepo.save(ticket));
+    }
 
     public void quitarTicket(Long id) {
-
         ticketRepo.deleteById(id);
+    }
+
+    public void quitarTarea(Long id){
+        tareaTicketRepo.deleteById(id);
     }
 
 

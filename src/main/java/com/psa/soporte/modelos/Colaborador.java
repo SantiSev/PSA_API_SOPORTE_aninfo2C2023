@@ -20,7 +20,7 @@ public class Colaborador {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long colaborador_id;
+    private Long colaboradorId;
 
     private String nombre;
 

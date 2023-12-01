@@ -5,9 +5,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-public class ProductoRequest {
+public class ProductoVersionRequest {
 
-    @Schema(example = "Sistema de Gestion")
-    private String nombre;
+    @Schema(example = "1.0.0")
+    private String version;
 
 }

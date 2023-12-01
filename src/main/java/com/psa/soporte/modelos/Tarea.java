@@ -1,7 +1,5 @@
 package com.psa.soporte.modelos;
 
-
-import com.psa.soporte.DTO.request.ProductoRequest;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,28 +13,27 @@ import java.util.List;
 @Data
 @Entity
 @NoArgsConstructor
-@Table(name = "productos")
-public class Producto {
+@Table(name = "tarea")
+public class Tarea {
+
+    public Tarea(Long tareaId) {
+        this.tareaIdRemoto = tareaId;
+        this.tickets = new ArrayList<>();
+    }
 
     @Id
-    @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long productoId;
+    private Long tareaId;
 
-    @Column
-    private String nombre;
+    @Column(unique = true)
+    private Long tareaIdRemoto;
 
-    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL)
-    private List<ProductoVersion> versiones;
+    @ManyToMany(mappedBy = "tareas")
+    private List<Ticket> tickets;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    public Producto(ProductoRequest productoRequest) {
-        this.nombre = productoRequest.getNombre();
-        this.versiones = new ArrayList<>();
-    }
 }

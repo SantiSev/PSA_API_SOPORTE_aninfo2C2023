@@ -6,11 +6,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class ProductoResponse {
+public class ProductoVersionResponse {
 
-    private Long productoId;
-    private String nombre;
-    private List<ProductoVersionResponse> versiones;
+    private Long productoVersionId;
+    private String version;
+    private List<TicketResponse> tickets;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
