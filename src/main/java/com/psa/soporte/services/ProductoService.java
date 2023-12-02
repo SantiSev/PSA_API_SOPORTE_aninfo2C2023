@@ -71,7 +71,7 @@ public class ProductoService {
     }
 
     public ProductoResponse crearProducto(ProductoRequest productoRequest) {
-   
+
         Producto productoNuevo = new Producto(productoRequest);
         return Converter.convertToProductoResponse(productoRepo.save(productoNuevo));
     }

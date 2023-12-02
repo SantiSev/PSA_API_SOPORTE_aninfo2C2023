@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -151,4 +153,30 @@ public class DeveloperController {
         productoService.quitarProductoVersion(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PostMapping("prodcuto_dummy_data")
+    public List<ProductoResponse> crearDummyData(){
+
+        List<String> productoNombres = new ArrayList<>(Arrays.asList("Sistema de Gestion Ultimatum", "Sistema de Seguridad ASAP", "Mega Sistemas"));
+        List<String> versiones = List.of("1.0.0", "2.1.3", "3.5.2", "4.2.1", "5.3.0");
+
+        List<ProductoResponse> responses = new ArrayList<>();
+
+        for (String nombre: productoNombres) {
+            ProductoRequest request = new ProductoRequest();
+            request.setNombre(nombre);
+            ProductoResponse productoNuevo = productoService.crearProducto(request);
+
+            for (String version: versiones) {
+                ProductoVersionRequest versionRequest = new ProductoVersionRequest();
+                versionRequest.setVersion(version);
+                productoService.crearProductoVersion(productoNuevo.getProductoId(), versionRequest);
+            }
+
+            responses.add(productoNuevo);
+        }
+
+        return responses;
+    }
+
 }
