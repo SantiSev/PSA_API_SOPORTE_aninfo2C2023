@@ -36,9 +36,9 @@ public class TicketController {
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("version/{version_id}")
-    public ResponseEntity<List<TicketResponse>> getAllTicketsByVersion(@PathVariable Long version_id) {
-        return new ResponseEntity<>(ticketService.getAllTicketsByVersion(version_id), HttpStatus.OK);
+    @GetMapping("producto/{producto_id}")
+    public ResponseEntity<List<TicketResponse>> getAllTicketsByVersion(@PathVariable Long producto_id) {
+        return new ResponseEntity<>(ticketService.getAllTicketsByProducto(producto_id), HttpStatus.OK);
     }
 
     @PostMapping("{version_id}")

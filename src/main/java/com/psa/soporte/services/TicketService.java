@@ -4,6 +4,7 @@ import com.psa.soporte.DTO.request.TicketRequest;
 import com.psa.soporte.DTO.response.TicketResponse;
 import com.psa.soporte.enums.*;
 import com.psa.soporte.modelos.*;
+import com.psa.soporte.repo.ProductoRepo;
 import com.psa.soporte.repo.ProductoVersionRepo;
 import com.psa.soporte.repo.TareaRepo;
 import com.psa.soporte.repo.TicketRepo;
@@ -13,21 +14,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TicketService {
 
     private final TicketRepo ticketRepo;
+    private final ProductoRepo productoRepo;
     private final TareaRepo tareaTicketRepo;
     private final ProductoVersionRepo productoVersionRepo;
     private final ClienteService clienteService;
     private final ColaboradorService colaboradorService;
 
     @Autowired
-    public TicketService(TicketRepo ticketRepo, TareaRepo tareaTicketRepo, ClienteService clienteService, ColaboradorService colaboradorService, ProductoVersionRepo productoVersionRepo) {
+    public TicketService(TicketRepo ticketRepo, ProductoRepo productoRepo, TareaRepo tareaTicketRepo, ClienteService clienteService, ColaboradorService colaboradorService, ProductoVersionRepo productoVersionRepo) {
         this.ticketRepo = ticketRepo;
+        this.productoRepo = productoRepo;
         this.tareaTicketRepo = tareaTicketRepo;
         this.clienteService = clienteService;
         this.colaboradorService = colaboradorService;
@@ -43,13 +48,19 @@ public class TicketService {
         return Converter.convertToTicketResponseList(tickets);
     }
 
-    public List<TicketResponse> getAllTicketsByVersion(Long productoVersionId) {
-        
-        List<Ticket> tickets = productoVersionRepo.findById(productoVersionId)
-                .orElseThrow(() -> new NotFoundException(ExceptionMensajes.PRODUCTO_NOT_FOUND.getMessage())).getTickets();
+    public List<TicketResponse> getAllTicketsByProducto(Long productoId) {
+
+        Producto producto = productoRepo.findById(productoId)
+                .orElseThrow(() -> new NotFoundException(ExceptionMensajes.PRODUCTO_NOT_FOUND.getMessage()));
+
+        List<Ticket> tickets = producto.getVersiones().stream()
+                .flatMap(version -> version.getTickets().stream())
+                .collect(Collectors.toList());
+
         if (tickets.isEmpty()) {
             throw new NotFoundException(ExceptionMensajes.EMPTY_LIST.getMessage());
         }
+
         return Converter.convertToTicketResponseList(tickets);
     }
 
