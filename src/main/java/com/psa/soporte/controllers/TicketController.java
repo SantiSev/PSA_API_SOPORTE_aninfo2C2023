@@ -28,7 +28,7 @@ public class TicketController {
         return new ResponseEntity<>(ticketService.getAllTickets(), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<TicketResponse> getTicketById(@PathVariable Long id) {
         TicketResponse ticket = ticketService.getTicketById(id);
         return ticket != null ?
@@ -36,18 +36,18 @@ public class TicketController {
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/producto={producto_id}")
-    public ResponseEntity<List<TicketResponse>> getAllTicketsByProducto(@PathVariable Long producto_id) {
-        return new ResponseEntity<>(ticketService.getAllTickets(producto_id), HttpStatus.OK);
+    @GetMapping("version/{version_id}")
+    public ResponseEntity<List<TicketResponse>> getAllTicketsByVersion(@PathVariable Long version_id) {
+        return new ResponseEntity<>(ticketService.getAllTicketsByVersion(version_id), HttpStatus.OK);
     }
 
-    @PostMapping("/{productoVersionId}")
-    public ResponseEntity<TicketResponse> crearTicket(@PathVariable Long productoVersionId, @RequestBody TicketRequest ticket) {
-        TicketResponse ticketCreado = ticketService.crearTicket(ticket, productoVersionId);
+    @PostMapping("{version_id}")
+    public ResponseEntity<TicketResponse> crearTicket(@PathVariable Long version_id, @RequestBody TicketRequest ticket) {
+        TicketResponse ticketCreado = ticketService.crearTicket(ticket, version_id);
         return new ResponseEntity<>(ticketCreado, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<TicketResponse> actualizarTicket(@PathVariable Long id, @RequestBody TicketRequest ticketRequest) {
         TicketResponse actualizarTicket = ticketService.actualizarTicket(id, ticketRequest);
         return actualizarTicket != null ?
@@ -55,7 +55,7 @@ public class TicketController {
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping("/{ticketId}/agregarTarea={tareaId}")
+    @PutMapping("{ticketId}/agregarTarea/{tareaId}")
     public ResponseEntity<TicketResponse> agregarTarea(@PathVariable Long ticketId, @PathVariable Long tareaId ) {
         TicketResponse actualizarTicket = ticketService.agregarTarea(ticketId, tareaId);
         return actualizarTicket != null ?
@@ -64,7 +64,7 @@ public class TicketController {
     }
 
 
-    @PutMapping("/{ticketId}/quitarTarea={tareaId}")
+    @PutMapping("{ticketId}/quitarTarea/{tareaId}")
     public ResponseEntity<TicketResponse> quitarTarea(@PathVariable Long ticketId, @PathVariable Long tareaId ) {
         TicketResponse actualizarTicket = ticketService.quitarTarea(ticketId, tareaId);
         return actualizarTicket != null ?
@@ -73,7 +73,7 @@ public class TicketController {
     }
 
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<Void> quitarTicket(@PathVariable Long id) {
         ticketService.quitarTicket(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

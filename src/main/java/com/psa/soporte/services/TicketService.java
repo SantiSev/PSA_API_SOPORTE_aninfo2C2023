@@ -43,9 +43,9 @@ public class TicketService {
         return Converter.convertToTicketResponseList(tickets);
     }
 
-    public List<TicketResponse> getAllTickets(Long ProductoVersionId) {
+    public List<TicketResponse> getAllTicketsByVersion(Long productoVersionId) {
         
-        List<Ticket> tickets = productoVersionRepo.findById(ProductoVersionId)
+        List<Ticket> tickets = productoVersionRepo.findById(productoVersionId)
                 .orElseThrow(() -> new NotFoundException(ExceptionMensajes.PRODUCTO_NOT_FOUND.getMessage())).getTickets();
         if (tickets.isEmpty()) {
             throw new NotFoundException(ExceptionMensajes.EMPTY_LIST.getMessage());

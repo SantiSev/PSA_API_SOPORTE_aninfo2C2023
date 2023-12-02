@@ -18,7 +18,7 @@ public class Converter {
     public static TicketResponse convertToTicketResponse(Ticket ticket) {
         TicketResponse response = new TicketResponse();
         response.setTicketId(ticket.getTicketId());
-        response.setProductoVersionId(ticket.getProductoVersion().getProductoVersionId());
+        response.setVersionNombre(ticket.getProductoVersion().getVersion());
         response.setNombre(ticket.getNombre());
         response.setDescripcion(ticket.getDescripcion());
         response.setPrioridad(ticket.getPrioridad().toString());
@@ -60,10 +60,8 @@ public class Converter {
         ProductoVersionResponse response = new ProductoVersionResponse();
         response.setProductoVersionId(productoVersion.getProductoVersionId());
         response.setVersion(productoVersion.getVersion());
-        response.setTickets(convertToTicketResponseList(productoVersion.getTickets()));
         response.setCreatedAt(productoVersion.getCreatedAt());
         response.setUpdatedAt(productoVersion.getUpdatedAt());
-
         return response;
     }
 

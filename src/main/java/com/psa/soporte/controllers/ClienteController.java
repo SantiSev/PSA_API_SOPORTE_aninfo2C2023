@@ -37,39 +37,7 @@ public class ClienteController {
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/{id}/tickets")
-    public ResponseEntity<List<Ticket>> getTicketsByClient(@PathVariable Long id) {
-        List<Ticket> tickets = clienteService.getAllTicketsFromClient(id);
-        return tickets != null ?
-                new ResponseEntity<>(tickets, HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
 
-    @PostMapping
-    public ResponseEntity<Cliente> crearCliente(@RequestBody ClienteRequest cliente) {
-        Cliente createdCliente = clienteService.crearCliente(cliente);
-        return new ResponseEntity<>(createdCliente, HttpStatus.CREATED);
-    }
-
-    @PostMapping("/procesar_clientes")
-    public ResponseEntity<List<Cliente>> procesarClientes() {
-        List<Cliente> clientes = clienteService.procesarClientes();
-        return new ResponseEntity<>(clientes, HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Cliente> actualizarCliente(@PathVariable Long id, @RequestBody ClienteRequest clienteRequest) {
-        Cliente clienteActualizada = clienteService.actualizarCliente(id, clienteRequest);
-        return clienteActualizada != null ?
-                new ResponseEntity<>(clienteActualizada, HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> quitarCliente(@PathVariable Long id) {
-        clienteService.quitarCliente(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
 
 
 }

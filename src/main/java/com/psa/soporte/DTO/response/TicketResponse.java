@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public class TicketResponse {
     private Long ticketId;
-    private Long productoVersionId;
+    private String versionNombre;
     private String nombre;
     private String descripcion;
     private String prioridad;

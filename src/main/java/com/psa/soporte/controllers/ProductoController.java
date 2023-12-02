@@ -30,58 +30,11 @@ public class ProductoController {
         return new ResponseEntity<>(productoService.getAllProductos(), HttpStatus.OK);
     }
 
-    @GetMapping("{id}/versiones")
+
+    @GetMapping("/versiones/{id}")
     public ResponseEntity<List<ProductoVersionResponse>> getAllVersiones(@PathVariable Long id) {
         return new ResponseEntity<>(productoService.getAllVersiones(id), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ProductoResponse> getProductoById(@PathVariable Long id) {
-        ProductoResponse producto = productoService.getProductoById(id);
-        return producto != null ?
-                new ResponseEntity<>(producto, HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-
-    @PostMapping
-    public ResponseEntity<ProductoResponse> crearProducto(@RequestBody ProductoRequest producto) {
-        ProductoResponse crearProducto = productoService.crearProducto(producto);
-        return new ResponseEntity<>(crearProducto, HttpStatus.CREATED);
-    }
-
-    @PostMapping("/{id}")
-    public ResponseEntity<ProductoVersionResponse> crearProductoVersion(@PathVariable Long id, @RequestBody ProductoVersionRequest version) {
-        ProductoVersionResponse crearProductoVersion = productoService.crearProductoVersion(id, version);
-        return new ResponseEntity<>(crearProductoVersion, HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ProductoResponse> actualizarProducto(@PathVariable Long id, @RequestBody ProductoRequest ProductoRequest) {
-        ProductoResponse actualizarProducto = productoService.actualizarProducto(id, ProductoRequest);
-        return actualizarProducto != null ?
-                new ResponseEntity<>(actualizarProducto, HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    @PutMapping("/version/{id}")
-    public ResponseEntity<ProductoVersionResponse> actualizarVersion(@PathVariable Long id, @RequestBody ProductoVersionRequest ProductoVersionRequest) {
-        ProductoVersionResponse actualizarVersion = productoService.actualizarVersion(id, ProductoVersionRequest);
-        return actualizarVersion != null ?
-                new ResponseEntity<>(actualizarVersion, HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> quitarProducto(@PathVariable Long id) {
-        productoService.quitarProducto(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @DeleteMapping("/version/{id}")
-    public ResponseEntity<Void> quitarVersion(@PathVariable Long id) {
-        productoService.quitarProductoVersion(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
 
 }

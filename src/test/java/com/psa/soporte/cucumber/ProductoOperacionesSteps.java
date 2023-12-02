@@ -1,22 +1,18 @@
 package com.psa.soporte.cucumber;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.psa.soporte.DTO.request.ProductoRequest;
+import com.psa.soporte.DTO.request.ProductoVersionRequest;
+import com.psa.soporte.DTO.response.ProductoResponse;
+import com.psa.soporte.modelos.Producto;
+import com.psa.soporte.services.ProductoService;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import psa.api_proyectos.application.dtos.ProyectoDto;
-import psa.api_proyectos.application.dtos.TareaDto;
-import psa.api_proyectos.application.exceptions.TareaInvalidaException;
-import psa.api_proyectos.application.exceptions.TareaNoEncontradaException;
-import psa.api_proyectos.application.services.ProyectoService;
-import psa.api_proyectos.application.services.TareaService;
-import psa.api_proyectos.domain.models.ProyectoEstado;
-import psa.api_proyectos.domain.models.Tarea;
-import psa.api_proyectos.domain.models.TareaEstado;
+
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -27,14 +23,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ProductoOperacionesSteps extends CucumberBootstrap{
 
 
-    @Autowired
-    private ProyectoService proyectoService;
-    @Autowired
-    private TareaService tareaService;
-    private ProyectoDto proyectoDto;
-    private Long proyectoId;
-    private TareaDto tareaDto;
-    private Long tareaId;
+    private Long productoId;
+    private ProductoRequest productoRequest;
+    private ProductoVersionRequest productoVersionRequest;
+
+    private ProductoService productoService;
 
     @After
     public void cleanUp() {
@@ -45,38 +38,30 @@ public class ProductoOperacionesSteps extends CucumberBootstrap{
     @Before
     public void before() {
         log.info(">>> Before scenario!");
-        tareaDto = new TareaDto();
+        ProductoResponse productoResponse = new ProductoResponse();
     }
 
     //TEST =======================================================================
 
 
-    @Given("^Que existe un proyecto crado y conozco su Id$")
-    public void creacionDeProyecto() throws JsonProcessingException {
-        if (proyectoDto == null) {
-            proyectoDto = new ProyectoDto();
-            proyectoDto.setNombre("a");
-            proyectoDto.setDescripcion("a");
-            proyectoDto.setEstadoIdm(ProyectoEstado.NO_INICIADO_IDM);
-            proyectoDto.setLiderId(1L);
-            proyectoId = proyectoService.saveProyecto(proyectoDto).getId();
+    @Given("^Que existe un producto y conozco su Id$")
+    public void creacionDeProducto() throws JsonProcessingException {
+        if (productoRequest == null) {
+            ProductoRequest request = new ProductoRequest();
+            request.setNombre("Sistema de Gestion");
+            productoId = productoService.crearProducto(request).getProductoId();
         }
     }
 
-    @Given("^Que tengo un id de un proyecto que no existe$")
+    @Given("^Que tengo un id de un producto que no existe$")
     public void asignacionDeIdIncorrectoAProyecto(){
-        proyectoId = 8573L;
+        productoId = 8573L;
     }
 
-    @Given("^Existe una tarea, esta pertenece a un proyecto y se conoce su Id y el Id del proyecto$")
-    public void creacionDeTarea() throws JsonProcessingException {
-        creacionDeProyecto();
-
-        tareaDto.setDescripcion("Una super descripcion de una tarea");
-        tareaDto.setEstadoIdm(TareaEstado.NUEVA_IDM);
-        tareaDto.setColaboradorAsignadoId(1L);
-        tareaDto.setFechaInicio(Date.valueOf("2015-12-12"));
-        tareaDto.setFechaFin(Date.valueOf("2022-02-02"));
+    @Given("^Existe una version de un producto, esta pertenece a un producto y se conoce su Id y el Id de su version$")
+    public void creacionDeVersion() throws JsonProcessingException {
+        creacionDeProducto();
+        productoVersionRequest.setVersion();
 
         tareaId = proyectoService.saveTarea(tareaDto, proyectoId).id;
     }

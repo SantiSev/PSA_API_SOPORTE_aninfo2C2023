@@ -10,7 +10,6 @@ public class ProductoVersionResponse {
 
     private Long productoVersionId;
     private String version;
-    private List<TicketResponse> tickets;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
