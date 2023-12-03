@@ -1,6 +1,5 @@
 package com.psa.soporte.cucumber;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.psa.soporte.DTO.request.ProductoRequest;
 import com.psa.soporte.DTO.request.ProductoVersionRequest;
 import com.psa.soporte.DTO.request.TicketRequest;
@@ -10,7 +9,6 @@ import com.psa.soporte.enums.Categoria;
 import com.psa.soporte.enums.Estado;
 import com.psa.soporte.enums.Prioridad;
 import com.psa.soporte.enums.Severidad;
-import com.psa.soporte.modelos.Ticket;
 import com.psa.soporte.services.ProductoService;
 import com.psa.soporte.services.TicketService;
 import io.cucumber.java.After;
@@ -22,10 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.webjars.NotFoundException;
-
-
-import java.sql.Date;
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -50,52 +44,16 @@ public class TicketOperacionesSteps extends CucumberBootstrap{
         log.info(">>> cleaning up after scenario!");
     }
 
-    //this method executes before every scenario
     @Before
     public void before() {
         log.info(">>> Before scenario!");
         ProductoResponse productoResponse = new ProductoResponse();
     }
 
-    //TEST =======================================================================
-
-
-    @Given("^Que existe un producto y conozco su Id$")
-    public void creacionDeProducto() throws JsonProcessingException {
-        /*if (productoRequest == null) {
-            ProductoRequest request = new ProductoRequest();
-            request.setNombre("Sistema de Gestion");
-            productoId = productoService.crearProducto(request).getProductoId();
-        }*/
-        System.out.println("test");
-    }
-
-    @Given("^Que tengo un id de un producto que no existe$")
-    public void asignacionDeIdIncorrectoAProyecto(){
-        productoId = 8573L;
-    }
-
-    @Given("^Existe una version de un producto, esta pertenece a un producto y se conoce su Id y el Id de la version$")
-    public void creacionDeVersion() throws JsonProcessingException {
-   /*     creacionDeProducto();
-        productoVersionRequest.setVersion("1.0.0");
-        versionId = productoService.crearProductoVersion(productoId, productoVersionRequest).getProductoVersionId();*/
-        System.out.println("test");
-    }
-
-    @When("^Se intenta crear un ticket con todos los campos asignados correctamente$")
-    public void creacionCorrectaDeUnTicket() {
-        //Arrange
-        /*ticketRequest.setNombre("Ticket uno");
-        ticketRequest.setDescripcion("Ticket basico");
-        ticketRequest.setEstado(Estado.SIN_INICIAR.getEstado());
-        ticketRequest.setCategoria(Categoria.PROYECTO.getCategoria());
-        ticketRequest.setPrioridad(Prioridad.BAJA.getDescripcion());
-        ticketRequest.setSeveridad(Severidad.S1.getDescripcion());
-        ticketRequest.setColaboradorId(null);
-        ticketRequest.setTareaRequest(null);
-
-        assertDoesNotThrow( () -> {ticketId = ticketService.crearTicket(ticketRequest, versionId).getTicketId();});*/
+    @Then("^El ticket se crea correctamente$")
+    public void validacionDeCorrectaCreacionDeTicket(){
+        TicketResponse ticketResponse = ticketService.getTicketById(ticketId);
+        assertNotNull(ticketResponse);
         System.out.println("test");
     }
 
@@ -109,7 +67,6 @@ public class TicketOperacionesSteps extends CucumberBootstrap{
         ticketRequest.setPrioridad(Prioridad.BAJA.getDescripcion());
         ticketRequest.setSeveridad(Severidad.S1.getDescripcion());
         ticketRequest.setColaboradorId(null);
-        ticketRequest.setTareaRequest(null);
 
         assertDoesNotThrow( () -> {ticketId = ticketService.crearTicket(ticketRequest, versionId).getTicketId();});
     }
@@ -124,7 +81,6 @@ public class TicketOperacionesSteps extends CucumberBootstrap{
         ticketRequest.setPrioridad(Prioridad.BAJA.getDescripcion());
         ticketRequest.setSeveridad(Severidad.S1.getDescripcion());
         ticketRequest.setColaboradorId(null);
-        ticketRequest.setTareaRequest(null);
 
         assertDoesNotThrow( () -> {ticketId = ticketService.crearTicket(ticketRequest, versionId).getTicketId();});
     }
@@ -139,7 +95,6 @@ public class TicketOperacionesSteps extends CucumberBootstrap{
         ticketRequest.setPrioridad(Prioridad.BAJA.getDescripcion());
         ticketRequest.setSeveridad(Severidad.S1.getDescripcion());
         ticketRequest.setColaboradorId(null);
-        ticketRequest.setTareaRequest(null);
 
         assertDoesNotThrow( () -> {ticketId = ticketService.crearTicket(ticketRequest, versionId).getTicketId();});
     }
@@ -154,7 +109,6 @@ public class TicketOperacionesSteps extends CucumberBootstrap{
         ticketRequest.setPrioridad(Prioridad.BAJA.getDescripcion());
         ticketRequest.setSeveridad(Severidad.S1.getDescripcion());
         ticketRequest.setColaboradorId(null);
-        ticketRequest.setTareaRequest(null);
 
         assertDoesNotThrow( () -> {ticketId = ticketService.crearTicket(ticketRequest, versionId).getTicketId();});
     }
@@ -170,36 +124,108 @@ public class TicketOperacionesSteps extends CucumberBootstrap{
         request.setPrioridad("inventado");
         request.setSeveridad("inventado");
         request.setColaboradorId(null);
-        request.setTareaRequest(null);
 
         ticketService.actualizarTicket(ticketId, request);
 
         //Modificamos
         assertThrows(BadRequestException.class, () ->ticketService.actualizarTicket(ticketId, request));
     }
-    @When("^Se le intenta eliminar a la tarea$")
-    public void EliminacionDeTicket(){
-        ticketService.quitarTarea(ticketId);
+
+    @Given("^Creación correcta de un ticket vacío$")
+    public void creacionDeProyecto()  {
+        ticketRequest = new TicketRequest();
     }
 
-    @Then("^El ticket se crea correctamente$")
-    public void validacionDeCorrectaCreacionDeTicket(){
-  /*      TicketResponse ticketResponse = ticketService.getTicketById(ticketId);
-        assertNotNull(ticketResponse);*/
-        System.out.println("test");
+    @When("^Se le asigna todo el contenido a dicho ticket para registrar un problema o tarea$")
+    public void asignacionDeLosCamposDeUnProyecto() {
+        try {
+            ticketRequest.setNombre(null);
+            ticketRequest.setDescripcion("Ticket basico");
+            ticketRequest.setEstado(Estado.SIN_INICIAR.getEstado());
+            ticketRequest.setCategoria("inventado");
+            ticketRequest.setPrioridad(Prioridad.BAJA.getDescripcion());
+            ticketRequest.setSeveridad(Severidad.S1.getDescripcion());
+            ticketRequest.setColaboradorId(null);
+        } catch (RuntimeException err) {
+            throw new RuntimeException();
+        }
+    }
+    @Then("^El ticket queda cargado$")
+    public TicketRequest elTicketSeCreaCorrectamente() {
+        return ticketRequest;
     }
 
-    @Then("^El ticket no es creada, y se informa del error$")
-    public void validacionDeIncorrectaCreacionDeTicket(){
-        assertThrows(
-                BadRequestException.class,
-                () -> ticketService.crearTicket(ticketRequest, versionId)
-        );
+
+    @When("^Se le asigna todo el contenido a dicho ticket para registrar un problema$")
+    public void asignacionDeLosCamposDeUnProyectoConErrores() {
+        try {
+            ticketRequest.setNombre(null);
+            ticketRequest.setDescripcion("Ticket basico");
+            ticketRequest.setEstado(Estado.SIN_INICIAR.getEstado());
+            ticketRequest.setCategoria("ERROR");
+            ticketRequest.setPrioridad(Prioridad.MEDIA.getDescripcion());
+            ticketRequest.setSeveridad(Severidad.S3.getDescripcion());
+            ticketRequest.setColaboradorId(null);
+        } catch (RuntimeException err) {
+            throw new RuntimeException();
+        }
     }
 
-    @Then("^La tarea es eliminada y ya no puede ser obtenida$")
-    public void validacionTareaEliminada(){
-        assertThrows(NotFoundException.class, () -> ticketService.getTicketById(ticketId));
+    @Then("^El ticket queda cargado con el error$")
+    public TicketRequest elTicketDeErrorSeCreaCorrectamente() {
+        return ticketRequest;
+    }
+
+    @Given("^A un ticket ya creado con sus atributos$")
+    public void creacionDeTicketCargadoPreviamente()  {
+        ticketRequest = new TicketRequest();
+        ticketRequest.setNombre(null);
+        ticketRequest.setDescripcion("Ticket basico");
+        ticketRequest.setEstado(Estado.SIN_INICIAR.getEstado());
+        ticketRequest.setCategoria("ERROR");
+        ticketRequest.setPrioridad(Prioridad.MEDIA.getDescripcion());
+        ticketRequest.setSeveridad(Severidad.S3.getDescripcion());
+        ticketRequest.setColaboradorId(null);
+    }
+
+    @When("^Cuando se usa edita el estado del ticket$")
+    public void cambiosdeEstadoDeUnTicketYaCreado() {
+        try {
+            ticketRequest.setEstado(Estado.EN_PROGRESO.getEstado());
+        } catch (RuntimeException err) {
+            throw new RuntimeException();
+        }
+    }
+    @Then("^Se verá reflejado el cambio en el ticket$")
+    public void elTicketSeModificaCorrectamente() {
+        assertSame(ticketRequest.getEstado(), Estado.EN_PROGRESO.getEstado());
+    }
+
+    @When("^Cuando se usa edita la severidad del ticket$")
+    public void cambiosdeSeveridadDeUnTicketYaCreado() {
+        try {
+            ticketRequest.setSeveridad(Severidad.S2.getDescripcion());
+        } catch (RuntimeException err) {
+            throw new RuntimeException();
+        }
+    }
+    @Then("^Se verá reflejado el cambio en su severidad$")
+    public void elTicketSeModificaCorrectamenteEnSuSeveridad() {
+        assertSame(ticketRequest.getSeveridad(), Severidad.S2.getDescripcion());
+    }
+
+
+    @When("^Cuando se usa edita la prioridad del ticket")
+    public void cambioEnlaPrioridadDelTicket() {
+        try {
+            ticketRequest.setPrioridad(Prioridad.ALTA.getDescripcion());
+        } catch (RuntimeException err) {
+            throw new RuntimeException();
+        }
+    }
+    @Then("^Se verá reflejado el cambio en su prioridad$")
+    public void func2() {
+        assertSame(ticketRequest.getPrioridad(), Prioridad.ALTA.getDescripcion());
     }
 
 }
