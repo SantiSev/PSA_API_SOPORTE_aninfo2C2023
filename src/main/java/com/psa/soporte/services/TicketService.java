@@ -159,7 +159,7 @@ public class TicketService {
         ticket.getTareas().clear();
 
         for (Integer tareaId: tareaRequest) {
-            Tarea tarea = tareaRepo.findById(Long.valueOf(tareaId)).orElseGet(() -> new Tarea(tareaId));
+            Tarea tarea = tareaRepo.findByTareaIdRemoto(Long.valueOf(tareaId)).orElseGet(() -> new Tarea(tareaId));
             tarea.getTickets().add(ticket);
             ticket.getTareas().add(tarea);
             tareaRepo.save(tarea);
