@@ -1,6 +1,5 @@
 package com.psa.soporte.services;
 
-import com.psa.soporte.DTO.request.TareaRequest;
 import com.psa.soporte.DTO.request.TicketRequest;
 import com.psa.soporte.DTO.response.TicketResponse;
 import com.psa.soporte.enums.*;
@@ -90,7 +89,7 @@ public class TicketService {
         version.getTickets().add(ticketNuevo);
         ticketNuevo.setProductoVersion(version);
 
-        setearTareas(ticketNuevo, ticketRequest.getTareaRequest());
+        setearTareas(ticketNuevo, ticketRequest.getTareaIds());
 
         return Converter.convertToTicketResponse(ticketRepo.save(ticketNuevo));
     }
@@ -140,7 +139,7 @@ public class TicketService {
             ticket.setCliente(null);
         }
 
-        setearTareas(ticket, ticketRequest.getTareaRequest());
+        setearTareas(ticket, ticketRequest.getTareaIds());
 
         return Converter.convertToTicketResponse(ticketRepo.save(ticket));
     }
@@ -155,11 +154,12 @@ public class TicketService {
         }
     }
 
-    private void setearTareas(Ticket ticket, TareaRequest tareaRequest){
+    private void setearTareas(Ticket ticket, List<Integer> tareaRequest){
 
         ticket.getTareas().clear();
-        for (Long tareaId: tareaRequest.getTareaIds()) {
-            Tarea tarea = tareaRepo.findById(tareaId).orElseGet(() -> new Tarea(tareaId));
+
+        for (Integer tareaId: tareaRequest) {
+            Tarea tarea = tareaRepo.findById(Long.valueOf(tareaId)).orElseGet(() -> new Tarea(tareaId));
             tarea.getTickets().add(ticket);
             ticket.getTareas().add(tarea);
             tareaRepo.save(tarea);

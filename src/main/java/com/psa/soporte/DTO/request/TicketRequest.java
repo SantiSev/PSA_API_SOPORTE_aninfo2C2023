@@ -4,6 +4,8 @@ package com.psa.soporte.DTO.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class TicketRequest {
 
@@ -23,5 +25,6 @@ public class TicketRequest {
     private Integer clienteId;
     @Schema(example = "0")
     private Integer colaboradorId;
-    private TareaRequest tareaRequest;
+    @Schema(example = "[1,2,3,4,5]")
+    private List<Integer> tareaIds;
 }

@@ -1,6 +1,5 @@
 package com.psa.soporte.controllers;
 
-import com.psa.soporte.DTO.request.TareaRequest;
 import com.psa.soporte.DTO.request.TicketRequest;
 import com.psa.soporte.DTO.response.TicketResponse;
 import com.psa.soporte.services.TicketService;
