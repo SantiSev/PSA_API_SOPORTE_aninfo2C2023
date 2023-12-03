@@ -1,28 +1,47 @@
 package com.psa.soporte.cucumber;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.psa.soporte.DTO.request.ProductoRequest;
+import com.psa.soporte.DTO.request.ProductoVersionRequest;
+import com.psa.soporte.DTO.request.TicketRequest;
+import com.psa.soporte.DTO.response.ProductoResponse;
+import com.psa.soporte.DTO.response.TicketResponse;
+import com.psa.soporte.enums.Categoria;
+import com.psa.soporte.enums.Estado;
+import com.psa.soporte.enums.Prioridad;
+import com.psa.soporte.enums.Severidad;
+import com.psa.soporte.modelos.Ticket;
+import com.psa.soporte.services.ProductoService;
+import com.psa.soporte.services.TicketService;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.coyote.BadRequestException;
+import org.webjars.NotFoundException;
 
 
 import java.sql.Date;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 public class TicketOperacionesSteps extends CucumberBootstrap{
 
-    @Autowired
-    private ProyectoService proyectoService;
-    private ProyectoDto proyectoDto;
-    private Long proyectoId;
 
-    //this method executes after every scenario
+    private Long productoId;
+    private Long versionId;
+    private Long ticketId;
+    private ProductoRequest productoRequest;
+    private TicketRequest ticketRequest;
+    private ProductoVersionRequest productoVersionRequest;
+
+    private TicketService ticketService;
+    private ProductoService productoService;
+
     @After
     public void cleanUp() {
         log.info(">>> cleaning up after scenario!");
@@ -32,154 +51,148 @@ public class TicketOperacionesSteps extends CucumberBootstrap{
     @Before
     public void before() {
         log.info(">>> Before scenario!");
-        proyectoDto = new ProyectoDto();
-        proyectoDto.setLiderId(1L);
-
+        ProductoResponse productoResponse = new ProductoResponse();
     }
 
-    //TEST ===================================================================================
+    //TEST =======================================================================
 
-    @Given("^Existe un proyecto y se conoce su Id$")
-    public void creacionDeUnProyectoExistente() throws JsonProcessingException {
-        proyectoDto.setNombre("Proyecto de prueba");
-        proyectoDto.setDescripcion("Esta es la descripcion de un proyecto");
-        proyectoDto.setEstadoIdm(ProyectoEstado.NO_INICIADO_IDM);
-        proyectoDto.setFechaInicio(Date.valueOf("2012-12-12"));
-        proyectoDto.setFechaFin(Date.valueOf("2022-12-12"));
-        proyectoId = proyectoService.saveProyecto(proyectoDto).getId();
+
+    @Given("^Que existe un producto y conozco su Id$")
+    public void creacionDeProducto() throws JsonProcessingException {
+        if (productoRequest == null) {
+            ProductoRequest request = new ProductoRequest();
+            request.setNombre("Sistema de Gestion");
+            productoId = productoService.crearProducto(request).getProductoId();
+        }
     }
 
-    @When("^se intenta crear un proyecto con todos los campos asignados correctamente$")
-    public void creacionDeProyectoCorrectamente(){
+    @Given("^Que tengo un id de un producto que no existe$")
+    public void asignacionDeIdIncorrectoAProyecto(){
+        productoId = 8573L;
+    }
+
+    @Given("^Existe una version de un producto, esta pertenece a un producto y se conoce su Id y el Id de la version$")
+    public void creacionDeVersion() throws JsonProcessingException {
+        creacionDeProducto();
+        productoVersionRequest.setVersion("1.0.0");
+        versionId = productoService.crearProductoVersion(productoId, productoVersionRequest).getProductoVersionId();
+    }
+
+    @When("^Se intenta crear un ticket con todos los campos asignados correctamente$")
+    public void creacionCorrectaDeUnTicket() {
         //Arrange
-        proyectoDto.setNombre("Proyecto de prueba");
-        proyectoDto.setDescripcion("Esta es la descripcion de un proyecto");
-        proyectoDto.setEstadoIdm(ProyectoEstado.NO_INICIADO_IDM);
-        proyectoDto.setFechaInicio(Date.valueOf("2012-12-12"));
-        proyectoDto.setFechaFin(Date.valueOf("2022-12-12"));
+        ticketRequest.setNombre("Ticket uno");
+        ticketRequest.setDescripcion("Ticket basico");
+        ticketRequest.setEstado(Estado.SIN_INICIAR.getEstado());
+        ticketRequest.setCategoria(Categoria.PROYECTO.getCategoria());
+        ticketRequest.setPrioridad(Prioridad.BAJA.getDescripcion());
+        ticketRequest.setSeveridad(Severidad.S1.getDescripcion());
+        ticketRequest.setColaboradorId(null);
+        ticketRequest.setTareaRequest(null);
 
-        //Act
-        assertDoesNotThrow( () -> {proyectoId = (proyectoService.saveProyecto(proyectoDto)).getId();});
+        assertDoesNotThrow( () -> {ticketId = ticketService.crearTicket(ticketRequest, versionId).getTicketId();});
     }
 
-    @When("^se intenta crear un proyecto con todos los campos asignados correctamente menos las fechas$")
-    public void cracionDeProyectoSinFechas() {
+    @When("^Se intenta asignar un ticket sin un titulo$")
+    public void creacionDeTicketSinTitulo() {
         //Arrange
-        proyectoDto.setNombre("Proyecto de prueba");
-        proyectoDto.setDescripcion("Esta es la descripcion de un proyecto");
-        proyectoDto.setEstadoIdm(ProyectoEstado.NO_INICIADO_IDM);
+        ticketRequest.setNombre(null);
+        ticketRequest.setDescripcion("Ticket basico");
+        ticketRequest.setEstado(Estado.SIN_INICIAR.getEstado());
+        ticketRequest.setCategoria(Categoria.PROYECTO.getCategoria());
+        ticketRequest.setPrioridad(Prioridad.BAJA.getDescripcion());
+        ticketRequest.setSeveridad(Severidad.S1.getDescripcion());
+        ticketRequest.setColaboradorId(null);
+        ticketRequest.setTareaRequest(null);
 
-        //Act
-        assertDoesNotThrow( () -> {proyectoId = (proyectoService.saveProyecto(proyectoDto)).getId();});
+        assertDoesNotThrow( () -> {ticketId = ticketService.crearTicket(ticketRequest, versionId).getTicketId();});
     }
 
-    @When("^se intenta crear un proyecto sin indicar el nombre correctamente$")
-    public void creacionConNombreIncorrectoDeProyecto(){
+    @When("^Se intenta asignar un ticket con un estado inexistente$")
+    public void creacionDeTicketConEstadoInexistente() {
         //Arrange
-        proyectoDto.setDescripcion("Esta es la descripcion de un proyecto");
-        proyectoDto.setEstadoIdm(ProyectoEstado.NO_INICIADO_IDM);
+        ticketRequest.setNombre(null);
+        ticketRequest.setDescripcion("Ticket basico");
+        ticketRequest.setEstado("inventado");
+        ticketRequest.setCategoria(Categoria.PROYECTO.getCategoria());
+        ticketRequest.setPrioridad(Prioridad.BAJA.getDescripcion());
+        ticketRequest.setSeveridad(Severidad.S1.getDescripcion());
+        ticketRequest.setColaboradorId(null);
+        ticketRequest.setTareaRequest(null);
+
+        assertDoesNotThrow( () -> {ticketId = ticketService.crearTicket(ticketRequest, versionId).getTicketId();});
     }
 
-    @When("^se intenta crear un proyecto sin indicar la descripción correctamente$")
-    public void creacionConDescripcionIncorrectaDeProyecto(){
-        //Arrenge
-        proyectoDto.setNombre("Siu Guarani 2");
-        proyectoDto.setEstadoIdm(ProyectoEstado.NO_INICIADO_IDM);
+    @When("^Se intenta asignar un ticket con una categoria inexistente$")
+    public void creacionDeTicketConCategoriaInexistente() {
+        //Arrange
+        ticketRequest.setNombre(null);
+        ticketRequest.setDescripcion("Ticket basico");
+        ticketRequest.setEstado(Estado.SIN_INICIAR.getEstado());
+        ticketRequest.setCategoria("inventado");
+        ticketRequest.setPrioridad(Prioridad.BAJA.getDescripcion());
+        ticketRequest.setSeveridad(Severidad.S1.getDescripcion());
+        ticketRequest.setColaboradorId(null);
+        ticketRequest.setTareaRequest(null);
+
+        assertDoesNotThrow( () -> {ticketId = ticketService.crearTicket(ticketRequest, versionId).getTicketId();});
     }
 
-    @When("^se intenta crear un proyecto sin indicar un estado correctamente$")
-    public void creacionConEstadoIncorrectoDeProyecto(){
-        proyectoDto.setNombre("Proyecto proyectoso");
-        proyectoDto.setDescripcion("Literal el proyecto super proyectoso");
+    @When("^Se intenta crear una ticket con un estado inexistente$")
+    public void creacionIncorrectaDeUnaTareaPorDescripcionEquivocada() {
+        //Arrange
+        ticketRequest.setNombre(null);
+        ticketRequest.setDescripcion("Ticket basico");
+        ticketRequest.setEstado("inventado");
+        ticketRequest.setCategoria(Categoria.PROYECTO.getCategoria());
+        ticketRequest.setPrioridad(Prioridad.BAJA.getDescripcion());
+        ticketRequest.setSeveridad(Severidad.S1.getDescripcion());
+        ticketRequest.setColaboradorId(null);
+        ticketRequest.setTareaRequest(null);
+
+        assertDoesNotThrow( () -> {ticketId = ticketService.crearTicket(ticketRequest, versionId).getTicketId();});
     }
 
-    @When("^se intenta crear un proyecto con una fecha final anterior a su fecha de inicio$")
-    public void creacionConFechasIncorrectasDeProyecto() {
-        proyectoDto.setNombre("Proyecto Fechoso");
-        proyectoDto.setDescripcion("FECHAS FECHAS FECHAS");
-        proyectoDto.setEstadoIdm(ProyectoEstado.NO_INICIADO_IDM);
-        Date fechaFin = Date.valueOf("2015-03-31");
-        Date fechaInicio = Date.valueOf("2022-12-19");
-        proyectoDto.setFechaFin(fechaFin);
-        proyectoDto.setFechaInicio(fechaInicio);
-    }
+    @When("^Se le intentan modificar algún campo del ticket con un dato inválido$")
+    public void modificacionIncorrectaDeTarea() {
 
-    @When("^Se le intentan modificar algún campo con un dato válido$")
-    public void modificacionDeProyecto() throws JsonProcessingException {
-        ProyectoDto proyectoModificadoDto = new ProyectoDto();
+        TicketRequest request = new TicketRequest();
+        request.setNombre(null);
+        request.setDescripcion("Ticket basico");
+        request.setEstado("inventado");
+        request.setCategoria("inventado");
+        request.setPrioridad("inventado");
+        request.setSeveridad("inventado");
+        request.setColaboradorId(null);
+        request.setTareaRequest(null);
 
-        proyectoModificadoDto.setNombre("Proyecto modificado");
-        proyectoModificadoDto.setDescripcion("descripcionModificada");
-        proyectoModificadoDto.setFechaInicio(Date.valueOf("2010-10-10"));
-        proyectoModificadoDto.setFechaFin(Date.valueOf("2023-03-03"));
-        proyectoModificadoDto.setLiderId(2L);
-        proyectoModificadoDto.setEstadoIdm(ProyectoEstado.EN_PROGRESO_IDM);
+        ticketService.actualizarTicket(ticketId, request);
 
         //Modificamos
-
-        proyectoService.updateProyecto(proyectoModificadoDto, proyectoId);
+        assertThrows(BadRequestException.class, () ->ticketService.actualizarTicket(ticketId, request));
+    }
+    @When("^Se le intenta eliminar a la tarea$")
+    public void EliminacionDeTicket(){
+        ticketService.quitarTarea(ticketId);
     }
 
-    @When("^Se le intentan modificar algún campo con un dato inválido$")
-    public void modificacionConCamposInvalidos() throws JsonProcessingException{
-        ProyectoDto proyectoModificadoDto = new ProyectoDto();
+    @Then("^El ticket se crea correctamente$")
+    public void validacionDeCorrectaCreacionDeTicket(){
+        TicketResponse ticketResponse = ticketService.getTicketById(ticketId);
+        assertNotNull(ticketResponse);
+    }
 
-        proyectoModificadoDto.setNombre("");
-        proyectoModificadoDto.setDescripcion("");
-        proyectoModificadoDto.setFechaInicio(Date.valueOf("2010-10-10"));
-        proyectoModificadoDto.setFechaFin(Date.valueOf("2023-03-03"));
-        proyectoModificadoDto.setLiderId(900L);
-        proyectoModificadoDto.setEstadoIdm(ProyectoEstado.EN_PROGRESO_IDM);
-
-        //Modificamos
+    @Then("^El ticket no es creada, y se informa del error$")
+    public void validacionDeIncorrectaCreacionDeTicket(){
         assertThrows(
-                ProyectoInvalidoException.class,
-                () -> proyectoService.updateProyecto(proyectoModificadoDto, proyectoId)
+                BadRequestException.class,
+                () -> ticketService.crearTicket(ticketRequest, versionId)
         );
     }
 
-    @When("^Se le intenta eliminar$")
-    public void borradoDeProyectoCreado(){
-        proyectoService.deleteProyectoById(proyectoId);
+    @Then("^La tarea es eliminada y ya no puede ser obtenida$")
+    public void validacionTareaEliminada(){
+        assertThrows(NotFoundException.class, () -> ticketService.getTicketById(ticketId));
     }
 
-    @Then("^El proyecto no es creado, y se informa del error$")
-    public void validacionDeProyectoNoCreado() {
-        assertThrows(
-                ProyectoInvalidoException.class,
-                () -> proyectoService.saveProyecto(proyectoDto)
-        );
-    }
-
-    @Then("^El Proyecto se crea correctamente$")
-    public void validacionDeProyectoCreado() {
-        assertNotNull(proyectoService.getProyectoById(proyectoId));
-    }
-
-    @Then("^El proyecto se actualiza y ahora tiene sus campos modificados$")
-    public void validacionDeModificacionDeProyecto() {
-        Proyecto proyectoModificado = proyectoService.getProyectoById(proyectoId);
-        assertEquals(proyectoModificado.getNombre(), "Proyecto modificado");
-        assertEquals(proyectoModificado.getDescripcion(), "descripcionModificada");
-        assertEquals(proyectoModificado.getEstado().idm, ProyectoEstado.EN_PROGRESO_IDM);
-        assertEquals(proyectoModificado.getFechaInicio(), Date.valueOf("2010-10-10"));
-        assertEquals(proyectoModificado.getFechaFin(), Date.valueOf("2023-03-03"));
-        assertEquals(proyectoModificado.getLiderAsignadoId(), 2L);
-    }
-
-    @Then("^El proyecto no se actualiza y se recibe una excepción$")
-    public void validacionDeNoModificacionDeProyecto() {
-        Proyecto proyectoNoModificado = proyectoService.getProyectoById(proyectoId);
-        assertEquals(proyectoNoModificado.getNombre(), proyectoDto.getNombre());
-        assertEquals(proyectoNoModificado.getDescripcion(), proyectoDto.getDescripcion());
-        assertEquals(proyectoNoModificado.getEstado().idm, proyectoDto.getEstadoIdm());
-        assertEquals(proyectoNoModificado.getFechaInicio(), proyectoDto.getFechaInicio());
-        assertEquals(proyectoNoModificado.getFechaFin(), proyectoDto.getFechaFin());
-        assertEquals(proyectoNoModificado.getLiderAsignadoId(), proyectoDto.getLiderId());
-    }
-
-    @Then("^El proyecto es eliminado y ya no puede ser obtenido$")
-    public void validacionDeProyectoEliminado(){
-        assertThrows(ProyectoNoEncontradoException.class, () -> proyectoService.getProyectoById(proyectoId));
-    }
 }

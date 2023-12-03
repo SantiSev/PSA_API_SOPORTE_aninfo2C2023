@@ -74,6 +74,8 @@ public class TicketService {
         ProductoVersion version = productoVersionRepo.findById(ProductoVersionId)
                 .orElseThrow(() -> new NotFoundException(ExceptionMensajes.PRODUCTO_NOT_FOUND.getMessage()));
 
+        sinTitulo(ticketRequest);
+
         Ticket ticketNuevo = new Ticket(ticketRequest);
 
         if (!(ticketRequest.getClienteId() == 0)){
@@ -101,8 +103,11 @@ public class TicketService {
     }
 
     public TicketResponse actualizarTicket(Long id, TicketRequest ticketRequest) {
+
         Ticket ticket = ticketRepo.findById(id)
                 .orElseThrow(() -> new NotFoundException(ExceptionMensajes.TICKET_NOT_FOUND.getMessage()));
+
+        sinTitulo(ticketRequest);
 
         Optional.ofNullable(ticketRequest.getNombre()).ifPresent(ticket::setNombre);
         Optional.ofNullable(ticketRequest.getDescripcion()).ifPresent(ticket::setDescripcion);
@@ -192,7 +197,11 @@ public class TicketService {
         tareaTicketRepo.deleteById(id);
     }
 
-
+    private void sinTitulo (TicketRequest request){
+        if (request.getNombre().isBlank() || request.getNombre().isEmpty()){
+            request.setNombre("(sin titulo)");
+        }
+    }
 
 
 }
