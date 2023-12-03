@@ -20,6 +20,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.webjars.NotFoundException;
 
 
@@ -32,14 +33,16 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TicketOperacionesSteps extends CucumberBootstrap{
 
 
+
     private Long productoId;
     private Long versionId;
     private Long ticketId;
     private ProductoRequest productoRequest;
     private TicketRequest ticketRequest;
     private ProductoVersionRequest productoVersionRequest;
-
+    @Autowired
     private TicketService ticketService;
+    @Autowired
     private ProductoService productoService;
 
     @After

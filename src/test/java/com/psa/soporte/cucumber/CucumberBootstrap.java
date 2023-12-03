@@ -8,11 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.context.TestPropertySource;
 
-@RunWith(Cucumber.class)
-@CucumberOptions(features = "src/test/resources/cucumber")
 @Slf4j
 @CucumberContextConfiguration
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(
         locations = "classpath:application-integrationtest.properties")

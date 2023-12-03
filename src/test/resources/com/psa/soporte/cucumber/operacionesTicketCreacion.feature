@@ -2,7 +2,7 @@ Feature: Operaciones de tickets
   Revisión de comportamiento del servicio de tickets
 
   Scenario:
-    Given Que existe un producto y conozco su Id
+    Given Existe una version de un producto, esta pertenece a un producto y se conoce su Id y el Id de la version
     When Se intenta crear un ticket con todos los campos asignados correctamente
     Then El ticket se crea correctamente
 
