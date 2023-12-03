@@ -1,6 +1,7 @@
 package com.psa.soporte.controllers;
 
 import com.psa.soporte.DTO.request.ClienteRequest;
+import com.psa.soporte.DTO.response.ClienteResponse;
 import com.psa.soporte.modelos.Cliente;
 import com.psa.soporte.modelos.Ticket;
 import com.psa.soporte.services.ClienteService;
@@ -24,14 +25,14 @@ public class ClienteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Cliente>> getAllClientes() {
-        List<Cliente> clientes = clienteService.getAllClientes();
+    public ResponseEntity<List<ClienteResponse>> getAllClientes() {
+        List<ClienteResponse> clientes = clienteService.getAllClientes();
         return new ResponseEntity<>(clientes, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cliente> getClienteById(@PathVariable Long id) {
-        Cliente cliente = clienteService.getClienteById(id);
+    public ResponseEntity<ClienteResponse> getClienteById(@PathVariable Long id) {
+        ClienteResponse cliente = clienteService.getClienteResponseById(id);
         return cliente != null ?
                 new ResponseEntity<>(cliente, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);

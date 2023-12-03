@@ -10,5 +10,5 @@ import java.util.List;
 public class TareaRequest {
 
     @Schema(example = "[1,2,3,4,5]")
-    private List<Long> tareaId;
+    private List<Long> tareaIds;
 }

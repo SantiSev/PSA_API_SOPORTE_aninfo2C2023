@@ -1,5 +1,6 @@
 package com.psa.soporte.services;
 
+import com.psa.soporte.DTO.request.TareaRequest;
 import com.psa.soporte.DTO.request.TicketRequest;
 import com.psa.soporte.DTO.response.TicketResponse;
 import com.psa.soporte.enums.*;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,7 +24,7 @@ public class TicketService {
 
     private final TicketRepo ticketRepo;
     private final ProductoRepo productoRepo;
-    private final TareaRepo tareaTicketRepo;
+    private final TareaRepo tareaRepo;
     private final ProductoVersionRepo productoVersionRepo;
     private final ClienteService clienteService;
     private final ColaboradorService colaboradorService;
@@ -33,7 +33,7 @@ public class TicketService {
     public TicketService(TicketRepo ticketRepo, ProductoRepo productoRepo, TareaRepo tareaTicketRepo, ClienteService clienteService, ColaboradorService colaboradorService, ProductoVersionRepo productoVersionRepo) {
         this.ticketRepo = ticketRepo;
         this.productoRepo = productoRepo;
-        this.tareaTicketRepo = tareaTicketRepo;
+        this.tareaRepo = tareaTicketRepo;
         this.clienteService = clienteService;
         this.colaboradorService = colaboradorService;
         this.productoVersionRepo = productoVersionRepo;
@@ -74,7 +74,7 @@ public class TicketService {
         ProductoVersion version = productoVersionRepo.findById(ProductoVersionId)
                 .orElseThrow(() -> new NotFoundException(ExceptionMensajes.PRODUCTO_NOT_FOUND.getMessage()));
 
-        sinTitulo(ticketRequest);
+        ticketSinTitulo(ticketRequest);
 
         Ticket ticketNuevo = new Ticket(ticketRequest);
 
@@ -90,14 +90,7 @@ public class TicketService {
         version.getTickets().add(ticketNuevo);
         ticketNuevo.setProductoVersion(version);
 
-        for (Long tareaId: ticketRequest.getTareaRequest().getTareaId()) {
-            Tarea tarea = tareaTicketRepo.findById(tareaId).orElseGet(() -> new Tarea(tareaId));
-
-            tarea.getTickets().add(ticketNuevo);
-            ticketNuevo.getTareas().add(tarea);
-
-            tareaTicketRepo.save(tarea);
-        }
+        setearTareas(ticketNuevo, ticketRequest.getTareaRequest());
 
         return Converter.convertToTicketResponse(ticketRepo.save(ticketNuevo));
     }
@@ -107,7 +100,7 @@ public class TicketService {
         Ticket ticket = ticketRepo.findById(id)
                 .orElseThrow(() -> new NotFoundException(ExceptionMensajes.TICKET_NOT_FOUND.getMessage()));
 
-        sinTitulo(ticketRequest);
+        ticketSinTitulo(ticketRequest);
 
         Optional.ofNullable(ticketRequest.getNombre()).ifPresent(ticket::setNombre);
         Optional.ofNullable(ticketRequest.getDescripcion()).ifPresent(ticket::setDescripcion);
@@ -140,7 +133,6 @@ public class TicketService {
             ticket.setCliente(null);
         }
 
-
         if (!(ticketRequest.getColaboradorId() == 0)){
             Colaborador colaborador = colaboradorService.getColaboradorById(Long.valueOf(ticketRequest.getColaboradorId()));
             ticket.setColaborador(colaborador);
@@ -148,60 +140,30 @@ public class TicketService {
             ticket.setCliente(null);
         }
 
-        return Converter.convertToTicketResponse(ticketRepo.save(ticket));
-    }
-
-
-    public TicketResponse agregarTarea(Long ticketId, Long tareaId){
-        Ticket ticket = ticketRepo.findById(ticketId)
-                .orElseThrow(() -> new NotFoundException(ExceptionMensajes.TICKET_NOT_FOUND.getMessage()));
-
-        Tarea tarea = tareaTicketRepo.findById(tareaId).orElseGet(() -> new Tarea(tareaId));
-
-        boolean tareaYaAsociada = ticket.getTareas().stream()
-                .anyMatch(t -> t.getTareaIdRemoto().equals(tareaId));
-
-        if (!tareaYaAsociada) {
-            ticket.getTareas().add(tarea);
-            tarea.getTickets().add(ticket);
-
-            tareaTicketRepo.save(tarea);
-        }
-
-        tareaTicketRepo.save(tarea);
+        setearTareas(ticket, ticketRequest.getTareaRequest());
 
         return Converter.convertToTicketResponse(ticketRepo.save(ticket));
     }
 
-    public TicketResponse quitarTarea(Long ticketId, Long tareaId){
-
-        Ticket ticket = ticketRepo.findById(ticketId)
-                .orElseThrow(() -> new NotFoundException(ExceptionMensajes.TICKET_NOT_FOUND.getMessage()));
-
-        for (Tarea tarea: ticket.getTareas()) {
-            if (tarea.getTareaId().equals(tareaId)){
-                ticket.getTareas().remove(tarea);
-                tarea.getTickets().remove(ticket);
-                tareaTicketRepo.save(tarea);
-                break;
-            }
-        }
-        return Converter.convertToTicketResponse(ticketRepo.save(ticket));
-    }
-
-    public void quitarTicket(Long id) {
+    public void quitarTicket(Long id){
         ticketRepo.deleteById(id);
     }
 
-    public void quitarTarea(Long id){
-        tareaTicketRepo.deleteById(id);
-    }
-
-    private void sinTitulo (TicketRequest request){
+    private void ticketSinTitulo(TicketRequest request){
         if (request.getNombre().isBlank() || request.getNombre().isEmpty()){
             request.setNombre("(sin titulo)");
         }
     }
 
+    private void setearTareas(Ticket ticket, TareaRequest tareaRequest){
+
+        ticket.getTareas().clear();
+        for (Long tareaId: tareaRequest.getTareaIds()) {
+            Tarea tarea = tareaRepo.findById(tareaId).orElseGet(() -> new Tarea(tareaId));
+            tarea.getTickets().add(ticket);
+            ticket.getTareas().add(tarea);
+            tareaRepo.save(tarea);
+        }
+    }
 
 }

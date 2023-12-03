@@ -1,8 +1,6 @@
 package com.psa.soporte.controllers;
 
-import com.psa.soporte.DTO.request.ColaboradorRequest;
-import com.psa.soporte.modelos.Colaborador;
-import com.psa.soporte.modelos.Ticket;
+import com.psa.soporte.DTO.response.ColaboradorResponse;
 import com.psa.soporte.services.ColaboradorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,14 +22,14 @@ public class ColaboradorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Colaborador>> getAllColaboradores() {
-        List<Colaborador> colaboradores = colaboradorService.getAllColaboradors();
+    public ResponseEntity<List<ColaboradorResponse>> getAllColaboradores() {
+        List<ColaboradorResponse> colaboradores = colaboradorService.getAllColaboradors();
         return new ResponseEntity<>(colaboradores, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Colaborador> getColaboradorById(@PathVariable Long id) {
-        Colaborador colaborador = colaboradorService.getColaboradorById(id);
+    public ResponseEntity<ColaboradorResponse> getColaboradorById(@PathVariable Long id) {
+        ColaboradorResponse colaborador = colaboradorService.getColaboradorResponseById(id);
         return colaborador != null ?
                 new ResponseEntity<>(colaborador, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);

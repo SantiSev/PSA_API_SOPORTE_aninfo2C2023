@@ -1,10 +1,12 @@
 package com.psa.soporte.services;
 
 import com.psa.soporte.DTO.request.ClienteRequest;
+import com.psa.soporte.DTO.response.ClienteResponse;
+import com.psa.soporte.DTO.response.TicketResponse;
 import com.psa.soporte.enums.ExceptionMensajes;
 import com.psa.soporte.modelos.Cliente;
-import com.psa.soporte.modelos.Ticket;
 import com.psa.soporte.repo.ClienteRepo;
+import com.psa.soporte.tools.Converter;
 import com.psa.soporte.tools.FetchResources;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,12 +26,17 @@ public class ClienteService {
         this.clienteRepo = clienteRepo;
     }
 
-    public List<Cliente> getAllClientes() {
+    public List<ClienteResponse> getAllClientes() {
         List<Cliente> clientes = (List<Cliente>) clienteRepo.findAll();
         if (clientes.isEmpty()){
             throw new NotFoundException(ExceptionMensajes.EMPTY_LIST.getMessage());
         }
-        return clientes;
+        return Converter.convertToClienteResponseList(clientes);
+    }
+
+    public ClienteResponse getClienteResponseById(Long id) {
+        return Converter.convertToClienteResponse(clienteRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException(ExceptionMensajes.CLIENTE_NOT_FOUND.getMessage())));
     }
 
     public Cliente getClienteById(Long id) {
@@ -37,43 +44,38 @@ public class ClienteService {
                 .orElseThrow(() -> new NotFoundException(ExceptionMensajes.CLIENTE_NOT_FOUND.getMessage()));
     }
 
-    public List<Ticket> getAllTicketsFromClient(Long id) {
+    public List<TicketResponse> getAllTicketsFromClient(Long id) {
         Cliente cliente = clienteRepo.findById(id).orElse(null);
         assert cliente != null;
         if (cliente.getTickets().isEmpty()){
             throw new NotFoundException(ExceptionMensajes.EMPTY_LIST.getMessage());
         }
-        return cliente.getTickets();
+        return Converter.convertToTicketResponseList(cliente.getTickets());
     }
 
 
-    public Cliente crearCliente(ClienteRequest clienteRequest) {
+    public ClienteResponse crearCliente(ClienteRequest clienteRequest) {
         evitarErrorNombre(clienteRequest);
         Cliente clienteNuevo = new Cliente(clienteRequest);
-        return clienteRepo.save(clienteNuevo);
+        return Converter.convertToClienteResponse(clienteRepo.save(clienteNuevo));
     }
 
-    public Cliente actualizarCliente(Long id, ClienteRequest clienteRequest) {
-        Cliente cliente = getClienteById(id);
+    public ClienteResponse actualizarCliente(Long id, ClienteRequest clienteRequest) {
+        Cliente cliente = clienteRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException(ExceptionMensajes.CLIENTE_NOT_FOUND.getMessage()));
         evitarErrorNombre(clienteRequest);
         cliente.setRazonSocial(clienteRequest.getRazonSocial());
         cliente.setCUIT(clienteRequest.getCUIT());
-        return clienteRepo.save(cliente);
+        return Converter.convertToClienteResponse(clienteRepo.save(cliente));
     }
 
     public void quitarCliente(Long id) {
         clienteRepo.deleteById(id);
     }
 
-    private void evitarErrorNombre(ClienteRequest clienteRequest){
-        if(clienteRepo.existsByRazonSocial(clienteRequest.getRazonSocial()) || clienteRepo.existsByCUIT(clienteRequest.getCUIT())){
-            throw new IllegalArgumentException(ExceptionMensajes.CLIENTE_YA_EXISTE.getMessage());
-        }
-    }
-
-    public List<Cliente> procesarClientes() {
+    public List<ClienteResponse> procesarClientes() {
         List<ClienteRequest> requests = FetchResources.processClients();
-        List<Cliente> clientes = new ArrayList<>();
+        List<ClienteResponse> clientes = new ArrayList<>();
 
         for (ClienteRequest request: requests) {
 
@@ -82,5 +84,11 @@ public class ClienteService {
             }
         }
         return clientes;
+    }
+
+    private void evitarErrorNombre(ClienteRequest clienteRequest){
+        if(clienteRepo.existsByRazonSocial(clienteRequest.getRazonSocial()) || clienteRepo.existsByCUIT(clienteRequest.getCUIT())){
+            throw new IllegalArgumentException(ExceptionMensajes.CLIENTE_YA_EXISTE.getMessage());
+        }
     }
 }

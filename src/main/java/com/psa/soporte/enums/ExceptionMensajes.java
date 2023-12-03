@@ -11,7 +11,7 @@ public enum ExceptionMensajes {
     COLABORADOR_YA_EXISTE("Ya existe un colaborador con ese legajo ingresado"),
     CLIENTE_YA_EXISTE("Ya existe un cliente con ese nombre ingresado"),
     ERROR_PROCESAR_CLIENTES("Hubo un error con el URL que has ingresado, por favor reviselo e intentalo denuevo"),
-    PRODUCTO_VERSION_YA_EXISTE("Ya existe una version de este prodcuto!");
+    PRODUCTO_VERSION_YA_EXISTE("Ya existe una version de este prodcuto!"), TAREA_NOT_FOUND("No existe una tarea con el ID ingresado");
 
     private final String message;
 

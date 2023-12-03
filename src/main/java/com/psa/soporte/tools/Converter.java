@@ -1,13 +1,7 @@
 package com.psa.soporte.tools;
 
-import com.psa.soporte.DTO.response.ProductoResponse;
-import com.psa.soporte.DTO.response.ProductoVersionResponse;
-import com.psa.soporte.DTO.response.TareaResponse;
-import com.psa.soporte.DTO.response.TicketResponse;
-import com.psa.soporte.modelos.Producto;
-import com.psa.soporte.modelos.ProductoVersion;
-import com.psa.soporte.modelos.Tarea;
-import com.psa.soporte.modelos.Ticket;
+import com.psa.soporte.DTO.response.*;
+import com.psa.soporte.modelos.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,14 +59,23 @@ public class Converter {
         return response;
     }
 
-    public static TareaResponse convertToTareaResponse(Tarea tarea){
+    public static ColaboradorResponse convertToColaboradorResponse(Colaborador colaborador){
+        ColaboradorResponse response = new ColaboradorResponse();
+        response.setColaboradorId(colaborador.getColaboradorId());
+        response.setNombre(colaborador.getNombre());
+        response.setLegajo(colaborador.getLegajo());
+        response.setCreatedAt(colaborador.getCreatedAt());
+        response.setUpdatedAt(colaborador.getUpdatedAt());
+        return response;
+    }
 
-        TareaResponse response = new TareaResponse();
-        response.setTareaId(tarea.getTareaId());
-        response.setTareaIdRemoto(tarea.getTareaIdRemoto());
-        response.setTicketIds(tarea.getTickets().stream()
-                .map(Ticket::getTicketId)
-                .collect(Collectors.toList()));
+    public static ClienteResponse convertToClienteResponse(Cliente cliente){
+        ClienteResponse response = new ClienteResponse();
+        response.setClientId(cliente.getClientId());
+        response.setRazonSocial(cliente.getRazonSocial());
+        response.setCUIT(cliente.getCUIT());
+        response.setCreatedAt(cliente.getCreatedAt());
+        response.setUpdatedAt(cliente.getUpdatedAt());
         return response;
     }
 
@@ -83,6 +86,24 @@ public class Converter {
             ticketResponses.add(response);
         }
         return ticketResponses;
+    }
+
+    public static List<ClienteResponse> convertToClienteResponseList(List<Cliente> clientes) {
+        List<ClienteResponse> clienteResponses = new ArrayList<>();
+        for (Cliente cliente : clientes) {
+            ClienteResponse response = convertToClienteResponse(cliente);
+            clienteResponses.add(response);
+        }
+        return clienteResponses;
+    }
+
+    public static List<ColaboradorResponse> convertToColaboradorResponseList(List<Colaborador> colaboradores) {
+        List<ColaboradorResponse> colaboradorResponses = new ArrayList<>();
+        for (Colaborador colaborador : colaboradores) {
+            ColaboradorResponse response = convertToColaboradorResponse(colaborador);
+            colaboradorResponses.add(response);
+        }
+        return colaboradorResponses;
     }
 
     public static List<ProductoResponse> convertToProductoResponseList(List<Producto> productos) {

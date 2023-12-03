@@ -4,8 +4,7 @@ import com.psa.soporte.DTO.request.ClienteRequest;
 import com.psa.soporte.DTO.request.ColaboradorRequest;
 import com.psa.soporte.DTO.request.ProductoRequest;
 import com.psa.soporte.DTO.request.ProductoVersionRequest;
-import com.psa.soporte.DTO.response.ProductoResponse;
-import com.psa.soporte.DTO.response.ProductoVersionResponse;
+import com.psa.soporte.DTO.response.*;
 import com.psa.soporte.modelos.Cliente;
 import com.psa.soporte.modelos.Colaborador;
 import com.psa.soporte.modelos.Ticket;
@@ -37,28 +36,28 @@ public class DeveloperController {
 
 
     @GetMapping("cliente/{id}/tickets")
-    public ResponseEntity<List<Ticket>> getTicketsByClient(@PathVariable Long id) {
-        List<Ticket> tickets = clienteService.getAllTicketsFromClient(id);
+    public ResponseEntity<List<TicketResponse>> getTicketsByClient(@PathVariable Long id) {
+        List<TicketResponse> tickets = clienteService.getAllTicketsFromClient(id);
         return tickets != null ?
                 new ResponseEntity<>(tickets, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("cliente")
-    public ResponseEntity<Cliente> crearCliente(@RequestBody ClienteRequest cliente) {
-        Cliente createdCliente = clienteService.crearCliente(cliente);
+    public ResponseEntity<ClienteResponse> crearCliente(@RequestBody ClienteRequest cliente) {
+        ClienteResponse createdCliente = clienteService.crearCliente(cliente);
         return new ResponseEntity<>(createdCliente, HttpStatus.CREATED);
     }
 
     @PostMapping("procesar_clientes")
-    public ResponseEntity<List<Cliente>> procesarClientes() {
-        List<Cliente> clientes = clienteService.procesarClientes();
+    public ResponseEntity<List<ClienteResponse>> procesarClientes() {
+        List<ClienteResponse> clientes = clienteService.procesarClientes();
         return new ResponseEntity<>(clientes, HttpStatus.CREATED);
     }
 
     @PutMapping("cliente/{id}")
-    public ResponseEntity<Cliente> actualizarCliente(@PathVariable Long id, @RequestBody ClienteRequest clienteRequest) {
-        Cliente clienteActualizada = clienteService.actualizarCliente(id, clienteRequest);
+    public ResponseEntity<ClienteResponse> actualizarCliente(@PathVariable Long id, @RequestBody ClienteRequest clienteRequest) {
+        ClienteResponse clienteActualizada = clienteService.actualizarCliente(id, clienteRequest);
         return clienteActualizada != null ?
                 new ResponseEntity<>(clienteActualizada, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -71,23 +70,23 @@ public class DeveloperController {
     }
 
     @GetMapping("colaborador/{id}/tickets")
-    public ResponseEntity<List<Ticket>> getTicketsByColaborador(@PathVariable Long id) {
-        List<Ticket> tickets = colaboradorService.getAllTicketsByColaborador(id);
+    public ResponseEntity<List<TicketResponse>> getTicketsByColaborador(@PathVariable Long id) {
+        List<TicketResponse> tickets = colaboradorService.getAllTicketsByColaborador(id);
         return tickets != null ?
                 new ResponseEntity<>(tickets, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("colaborador")
-    public ResponseEntity<Colaborador> crearColaborador(@RequestBody ColaboradorRequest colaborador) {
-        Colaborador colaboradorCreado = colaboradorService.crearColaborador(colaborador);
+    public ResponseEntity<ColaboradorResponse> crearColaborador(@RequestBody ColaboradorRequest colaborador) {
+        ColaboradorResponse colaboradorCreado = colaboradorService.crearColaborador(colaborador);
         return new ResponseEntity<>(colaboradorCreado, HttpStatus.CREATED);
     }
 
 
     @PutMapping("colaborador/{id}")
-    public ResponseEntity<Colaborador> actualizarColaborador(@PathVariable Long id, @RequestBody ColaboradorRequest colaboradorRequest) {
-        Colaborador coalboradorActualizada = colaboradorService.actualizarColaborador(id, colaboradorRequest);
+    public ResponseEntity<ColaboradorResponse> actualizarColaborador(@PathVariable Long id, @RequestBody ColaboradorRequest colaboradorRequest) {
+        ColaboradorResponse coalboradorActualizada = colaboradorService.actualizarColaborador(id, colaboradorRequest);
         return coalboradorActualizada != null ?
                 new ResponseEntity<>(coalboradorActualizada, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -100,8 +99,8 @@ public class DeveloperController {
     }
 
     @PostMapping("procesar_colaboradores")
-    public ResponseEntity<List<Colaborador>> procesarColaboradores() {
-        List<Colaborador> colaboradors = colaboradorService.procesarColaboradores();
+    public ResponseEntity<List<ColaboradorResponse>> procesarColaboradores() {
+        List<ColaboradorResponse> colaboradors = colaboradorService.procesarColaboradores();
         return new ResponseEntity<>(colaboradors, HttpStatus.CREATED);
     }
 
@@ -178,5 +177,6 @@ public class DeveloperController {
 
         return responses;
     }
+
 
 }

@@ -55,33 +55,9 @@ public class TicketController {
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping("{ticketId}/agregarTarea/{tareaId}")
-    public ResponseEntity<TicketResponse> agregarTarea(@PathVariable Long ticketId, @PathVariable Long tareaId ) {
-        TicketResponse actualizarTicket = ticketService.agregarTarea(ticketId, tareaId);
-        return actualizarTicket != null ?
-                new ResponseEntity<>(actualizarTicket, HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-
-    @PutMapping("{ticketId}/quitarTarea/{tareaId}")
-    public ResponseEntity<TicketResponse> quitarTarea(@PathVariable Long ticketId, @PathVariable Long tareaId ) {
-        TicketResponse actualizarTicket = ticketService.quitarTarea(ticketId, tareaId);
-        return actualizarTicket != null ?
-                new ResponseEntity<>(actualizarTicket, HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-
     @DeleteMapping("{id}")
     public ResponseEntity<Void> quitarTicket(@PathVariable Long id) {
         ticketService.quitarTicket(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @DeleteMapping("/tarea/{id}")
-    public ResponseEntity<Void> quitarTarea(@PathVariable Long id) {
-        ticketService.quitarTarea(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
