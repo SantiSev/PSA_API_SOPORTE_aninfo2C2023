@@ -28,7 +28,7 @@ public class Converter {
             response.setClienteId(ticket.getCliente().getClientId());
         }
         if (ticket.getColaborador() != null){
-            response.setColaboradorId(response.getColaboradorId());
+            response.setColaboradorId(ticket.getColaborador().getColaboradorId());
         }
 
         response.setCreatedAt(ticket.getCreatedAt());

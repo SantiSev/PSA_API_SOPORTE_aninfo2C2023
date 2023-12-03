@@ -16,8 +16,8 @@ import java.util.List;
 @Table(name = "tarea")
 public class Tarea {
 
-    public Tarea(Long tareaId) {
-        this.tareaIdRemoto = tareaId;
+    public Tarea(Integer tareaId) {
+        this.tareaIdRemoto = Long.valueOf(tareaId);
         this.tickets = new ArrayList<>();
     }
 
