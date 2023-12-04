@@ -20,9 +20,7 @@ public class Converter {
         response.setCategoria(ticket.getCategoria().toString());
         response.setEstado(ticket.getEstado().toString());
 
-        response.setTareaIds(ticket.getTareas().stream()
-                .map(Tarea::getTareaIdRemoto)
-                .collect(Collectors.toList()));
+        response.setTareas(FetchResources.getTareas(ticket.getTicketId()));
 
         if (ticket.getCliente() != null){
             response.setClienteId(ticket.getCliente().getClientId());

@@ -1,14 +1,15 @@
 package com.psa.soporte.services;
 
 import com.psa.soporte.DTO.request.TicketRequest;
+import com.psa.soporte.DTO.response.TareaResponse;
 import com.psa.soporte.DTO.response.TicketResponse;
 import com.psa.soporte.enums.*;
 import com.psa.soporte.modelos.*;
 import com.psa.soporte.repo.ProductoRepo;
 import com.psa.soporte.repo.ProductoVersionRepo;
-import com.psa.soporte.repo.TareaRepo;
 import com.psa.soporte.repo.TicketRepo;
 import com.psa.soporte.tools.Converter;
+import com.psa.soporte.tools.FetchResources;
 import com.psa.soporte.tools.Validacion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,19 +24,17 @@ public class TicketService {
 
     private final TicketRepo ticketRepo;
     private final ProductoRepo productoRepo;
-    private final TareaRepo tareaRepo;
     private final ProductoVersionRepo productoVersionRepo;
     private final ClienteService clienteService;
     private final ColaboradorService colaboradorService;
 
     @Autowired
-    public TicketService(TicketRepo ticketRepo, ProductoRepo productoRepo, TareaRepo tareaTicketRepo, ClienteService clienteService, ColaboradorService colaboradorService, ProductoVersionRepo productoVersionRepo) {
+    public TicketService(TicketRepo ticketRepo, ProductoRepo productoRepo, ProductoVersionRepo productoVersionRepo, ClienteService clienteService, ColaboradorService colaboradorService) {
         this.ticketRepo = ticketRepo;
         this.productoRepo = productoRepo;
-        this.tareaRepo = tareaTicketRepo;
+        this.productoVersionRepo = productoVersionRepo;
         this.clienteService = clienteService;
         this.colaboradorService = colaboradorService;
-        this.productoVersionRepo = productoVersionRepo;
     }
 
 
@@ -89,9 +88,11 @@ public class TicketService {
         version.getTickets().add(ticketNuevo);
         ticketNuevo.setProductoVersion(version);
 
-        setearTareas(ticketNuevo, ticketRequest.getTareaIds());
+        ticketRepo.save(ticketNuevo); //1
 
-        return Converter.convertToTicketResponse(ticketRepo.save(ticketNuevo));
+        FetchResources.setTicketTarea(ticketNuevo, ticketRequest.getTareaIds());
+
+        return Converter.convertToTicketResponse(ticketNuevo);
     }
 
     public TicketResponse actualizarTicket(Long id, TicketRequest ticketRequest) {
@@ -139,7 +140,7 @@ public class TicketService {
             ticket.setCliente(null);
         }
 
-        setearTareas(ticket, ticketRequest.getTareaIds());
+        FetchResources.setTicketTarea(ticket, ticketRequest.getTareaIds());
 
         return Converter.convertToTicketResponse(ticketRepo.save(ticket));
     }
@@ -154,16 +155,6 @@ public class TicketService {
         }
     }
 
-    private void setearTareas(Ticket ticket, List<Integer> tareaRequest){
 
-        ticket.getTareas().clear();
-
-        for (Integer tareaId: tareaRequest) {
-            Tarea tarea = tareaRepo.findByTareaIdRemoto(Long.valueOf(tareaId)).orElseGet(() -> new Tarea(tareaId));
-            tarea.getTickets().add(ticket);
-            ticket.getTareas().add(tarea);
-            tareaRepo.save(tarea);
-        }
-    }
 
 }

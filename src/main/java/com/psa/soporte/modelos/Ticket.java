@@ -39,8 +39,6 @@ public class Ticket {
         Validacion.validarEnum(ticketRequest.getEstado(), Estado.class);
         this.estado = Estado.valueOf(ticketRequest.getEstado().toUpperCase());
 
-        this.tareas = new ArrayList<>();
-
     }
 
     @Id
@@ -72,13 +70,6 @@ public class Ticket {
     @ManyToOne
     private ProductoVersion productoVersion;
 
-    @ManyToMany
-    @JoinTable(
-            name = "ticket_tarea",
-            joinColumns = @JoinColumn(name = "ticket_id"),
-            inverseJoinColumns = @JoinColumn(name = "tarea_id")
-    )
-    private List<Tarea> tareas;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

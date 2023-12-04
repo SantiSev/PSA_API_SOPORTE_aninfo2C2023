@@ -26,5 +26,5 @@ public class TicketRequest {
     @Schema(example = "0")
     private Integer colaboradorId;
     @Schema(example = "[1,2,3,4,5]")
-    private List<Integer> tareaIds;
+    private List<Long> tareaIds;
 }
