@@ -88,7 +88,8 @@ public class TicketService {
         version.getTickets().add(ticketNuevo);
         ticketNuevo.setProductoVersion(version);
 
-        ticketRepo.save(ticketNuevo);
+        ticketRepo.save(ticketNuevo); //1
+
         FetchResources.setTicketTarea(ticketNuevo, ticketRequest.getTareaIds());
 
         return Converter.convertToTicketResponse(ticketNuevo);

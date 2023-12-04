@@ -3,7 +3,6 @@ package com.psa.soporte.tools;
 import com.psa.soporte.DTO.request.ClienteRequest;
 import com.psa.soporte.DTO.request.ColaboradorRequest;
 import com.psa.soporte.DTO.response.TareaResponse;
-import com.psa.soporte.enums.ExceptionMensajes;
 import com.psa.soporte.modelos.Ticket;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -54,7 +53,7 @@ public class FetchResources {
 
             // Fetch JSON data
             ResponseEntity<List<Map<String, Object>>> responseEntity = restTemplate.exchange(
-                    "https://localhost:8081/tareaTicket/ticket/" + ticketId,
+                    "https://api-proyectos-wp7y.onrender.com/ticket/" + ticketId,
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<>() {
@@ -69,7 +68,7 @@ public class FetchResources {
 
                     TareaResponse tareaResponse = new TareaResponse();
                     tareaResponse.setTareaId((Long) jsonEntry.get("id"));
-                    tareaResponse.setTareaNombre((String) jsonEntry.get("nombre"));
+                    tareaResponse.setDescripcion((String) jsonEntry.get("descripcion"));
 
                     tareas.add(tareaResponse);
 
@@ -101,7 +100,7 @@ public class FetchResources {
 
                 // Fetch JSON data
                 ResponseEntity<List<Map<String, Object>>> responseEntity = restTemplate.exchange(
-                        "https://localhost:8081/tareaTicket",
+                        "https://api-proyectos-wp7y.onrender.com/tareaTicket",
                         HttpMethod.POST,
                         requestEntity,
                         new ParameterizedTypeReference<>() {
