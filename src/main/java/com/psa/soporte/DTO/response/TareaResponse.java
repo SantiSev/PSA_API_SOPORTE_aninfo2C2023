@@ -8,6 +8,5 @@ import java.util.List;
 @Data
 public class TareaResponse {
     private Long tareaId;
-    private Long tareaIdRemoto;
-    private List<Long> ticketIds;
+    private String tareaNombre;
 }

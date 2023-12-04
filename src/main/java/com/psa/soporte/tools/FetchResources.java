@@ -2,13 +2,15 @@ package com.psa.soporte.tools;
 
 import com.psa.soporte.DTO.request.ClienteRequest;
 import com.psa.soporte.DTO.request.ColaboradorRequest;
+import com.psa.soporte.DTO.response.TareaResponse;
 import com.psa.soporte.enums.ExceptionMensajes;
+import com.psa.soporte.modelos.Ticket;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +34,6 @@ public class FetchResources {
 
             if (jsonData != null) {
                 for (Map<String, Object> jsonEntry : jsonData) {
-
                     ClienteRequest request = new ClienteRequest();
                     request.setCUIT((String) jsonEntry.get("CUIT"));
                     request.setRazonSocial((String) jsonEntry.get("razon social"));
@@ -45,6 +46,76 @@ public class FetchResources {
             throw new RuntimeException(e.getMessage());
         }
     }
+
+    public static List<TareaResponse> getTareas(Long ticketId){
+
+        try{
+            RestTemplate restTemplate = new RestTemplate();
+
+            // Fetch JSON data
+            ResponseEntity<List<Map<String, Object>>> responseEntity = restTemplate.exchange(
+                    "https://localhost:8081/tareaTicket/ticket/" + ticketId,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<>() {
+                    }
+            );
+            List<Map<String, Object>> jsonData = responseEntity.getBody();
+
+            List<TareaResponse> tareas = new ArrayList<>();
+
+            if (jsonData != null) {
+                for (Map<String, Object> jsonEntry : jsonData) {
+
+                    TareaResponse tareaResponse = new TareaResponse();
+                    tareaResponse.setTareaId((Long) jsonEntry.get("id"));
+                    tareaResponse.setTareaNombre((String) jsonEntry.get("nombre"));
+
+                    tareas.add(tareaResponse);
+
+                }
+            }
+            return tareas;
+
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+
+    public static void setTicketTarea(Ticket ticket, List<Long> tareaIds){
+
+        try{
+
+            for (Long tareaId: tareaIds) {
+
+                RestTemplate restTemplate = new RestTemplate();
+
+                Map<String, Object> requestBody = new HashMap<>();
+                requestBody.put("tareaId", tareaId);
+                requestBody.put("ticketId", ticket.getTicketId());
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+                // Fetch JSON data
+                ResponseEntity<List<Map<String, Object>>> responseEntity = restTemplate.exchange(
+                        "https://localhost:8081/tareaTicket",
+                        HttpMethod.POST,
+                        requestEntity,
+                        new ParameterizedTypeReference<>() {
+                        }
+                );
+
+            }
+
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+
 
     public static List<ColaboradorRequest> processColaboradores(){
 

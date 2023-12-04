@@ -19,5 +19,5 @@ public class TicketResponse {
     private Long colaboradorId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private List<Long> tareaIds;
+    private List<TareaResponse> tareas;
 }
