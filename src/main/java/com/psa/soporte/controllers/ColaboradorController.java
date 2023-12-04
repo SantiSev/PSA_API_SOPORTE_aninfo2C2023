@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "colaboradores")
 //@CrossOrigin(origins = "http://localhost:3000")
-@CrossOrigin(origins = "https://psa-front-nine.vercel.app/")
+@CrossOrigin(origins = "*")
 public class ColaboradorController {
 
     private final ColaboradorService colaboradorService;
