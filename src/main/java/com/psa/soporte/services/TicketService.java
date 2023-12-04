@@ -142,7 +142,7 @@ public class TicketService {
             ticket.setCliente(null);
         }
 
-        
+
         FetchResources.setTicketTarea(ticket, ticketRequest.getTareaIds());
 
 

@@ -48,6 +48,8 @@ public class FetchResources {
 
     public static List<TareaResponse> getTareas(Long ticketId){
 
+        List<TareaResponse> tareas = new ArrayList<>();
+
         try{
             RestTemplate restTemplate = new RestTemplate();
 
@@ -61,8 +63,6 @@ public class FetchResources {
             );
             List<Map<String, Object>> jsonData = responseEntity.getBody();
 
-            List<TareaResponse> tareas = new ArrayList<>();
-
             if (jsonData != null) {
                 for (Map<String, Object> jsonEntry : jsonData) {
                     Map<String, Object> tareaJson = (Map<String, Object>) jsonEntry.get("tarea");
@@ -75,12 +75,16 @@ public class FetchResources {
             return tareas;
 
         }catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+            return new ArrayList<>();
         }
     }
 
 
     public static void setTicketTarea(Ticket ticket, List<Long> tareaIds){
+
+        if (tareaIds.isEmpty()){
+            return;
+        }
 
         try{
 
