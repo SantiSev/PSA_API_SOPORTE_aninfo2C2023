@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class TareaResponse {
-    private Long tareaId;
+    private Integer tareaId;
     private String descripcion;
 }

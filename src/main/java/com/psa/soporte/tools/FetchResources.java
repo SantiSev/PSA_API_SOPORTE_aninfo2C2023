@@ -53,7 +53,7 @@ public class FetchResources {
 
             // Fetch JSON data
             ResponseEntity<List<Map<String, Object>>> responseEntity = restTemplate.exchange(
-                    "https://api-proyectos-wp7y.onrender.com/ticket/" + ticketId,
+                    "https://api-proyectos-wp7y.onrender.com/tareaTicket/ticket/" + ticketId,
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<>() {
@@ -65,13 +65,11 @@ public class FetchResources {
 
             if (jsonData != null) {
                 for (Map<String, Object> jsonEntry : jsonData) {
-
+                    Map<String, Object> tareaJson = (Map<String, Object>) jsonEntry.get("tarea");
                     TareaResponse tareaResponse = new TareaResponse();
-                    tareaResponse.setTareaId((Long) jsonEntry.get("id"));
-                    tareaResponse.setDescripcion((String) jsonEntry.get("descripcion"));
-
+                    tareaResponse.setTareaId((Integer) tareaJson.get("id"));
+                    tareaResponse.setDescripcion((String) tareaJson.get("descripcion"));
                     tareas.add(tareaResponse);
-
                 }
             }
             return tareas;
@@ -110,7 +108,7 @@ public class FetchResources {
             }
 
         }catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -118,6 +116,7 @@ public class FetchResources {
 
     public static List<ColaboradorRequest> processColaboradores(){
 
+        List<ColaboradorRequest> requests = new ArrayList<>();
         try{
             RestTemplate restTemplate = new RestTemplate();
 
@@ -130,7 +129,7 @@ public class FetchResources {
                     }
             );
             List<Map<String, Object>> jsonData = responseEntity.getBody();
-            List<ColaboradorRequest> requests = new ArrayList<>();
+
 
             if (jsonData != null) {
                 for (Map<String, Object> jsonEntry : jsonData) {
@@ -142,11 +141,11 @@ public class FetchResources {
                     requests.add(request);
                 }
             }
-            return requests;
 
         }catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+            System.out.println(e.getMessage());
         }
+        return requests;
     }
 
 
