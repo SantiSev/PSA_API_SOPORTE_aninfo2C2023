@@ -12,7 +12,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "tickets")
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://psa-front-two.vercel.app/")
 public class TicketController {
 
     private final TicketService ticketService;
