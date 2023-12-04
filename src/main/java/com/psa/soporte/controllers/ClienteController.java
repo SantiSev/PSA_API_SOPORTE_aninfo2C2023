@@ -14,8 +14,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "clientes")
-//@CrossOrigin(origins = "http://localhost:3000")
-@CrossOrigin(origins = "https://psa-front-two.vercel.app/")
+@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "https://psa-front-two.vercel.app")
 public class ClienteController {
 
     private final ClienteService clienteService;
