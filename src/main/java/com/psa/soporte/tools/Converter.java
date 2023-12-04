@@ -20,7 +20,17 @@ public class Converter {
         response.setCategoria(ticket.getCategoria().toString());
         response.setEstado(ticket.getEstado().toString());
 
+        /*
         response.setTareas(FetchResources.getTareas(ticket.getTicketId()));
+        */
+        List<TareaResponse> tareaResponses = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            TareaResponse response1 = new TareaResponse();
+            response1.setTareaId(i);
+            response1.setDescripcion("Esto es una prueba");
+            tareaResponses.add(response1);
+        }
+        response.setTareas(tareaResponses);
 
         if (ticket.getCliente() != null){
             response.setClienteId(ticket.getCliente().getClientId());

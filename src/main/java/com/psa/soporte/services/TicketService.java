@@ -90,7 +90,9 @@ public class TicketService {
 
         ticketRepo.save(ticketNuevo); //1
 
+        /*
         FetchResources.setTicketTarea(ticketNuevo, ticketRequest.getTareaIds());
+         */
 
         return Converter.convertToTicketResponse(ticketNuevo);
     }
@@ -140,7 +142,9 @@ public class TicketService {
             ticket.setCliente(null);
         }
 
+        /*
         FetchResources.setTicketTarea(ticket, ticketRequest.getTareaIds());
+         */
 
         return Converter.convertToTicketResponse(ticketRepo.save(ticket));
     }
